@@ -14,8 +14,18 @@ class Scanner:
         return self.tokens
 
     def _scan_token(self):
-        # No token scanning yet (empty file case)
+        char = self._advance()
+
+        if char == '(':
+            self.tokens.append(Token(TokenType.LEFT_PAREN, char, self.line))
+        elif char == ')':
+            self.tokens.append(Token(TokenType.RIGHT_PAREN, char, self.line))
+        # else: ignore other characters for now
+
+    def _advance(self):
+        char = self.source[self.current]
         self.current += 1
+        return char
 
     def _is_at_end(self):
         return self.current >= len(self.source)

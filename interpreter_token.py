@@ -1,6 +1,8 @@
 from enum import Enum, auto
 
 class TokenType(Enum):
+    LEFT_PAREN = auto()
+    RIGHT_PAREN = auto()
     EOF = auto()
 
 class Token:
