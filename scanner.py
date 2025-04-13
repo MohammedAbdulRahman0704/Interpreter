@@ -20,6 +20,10 @@ class Scanner:
             self.tokens.append(Token(TokenType.LEFT_PAREN, char, self.line))
         elif char == ')':
             self.tokens.append(Token(TokenType.RIGHT_PAREN, char, self.line))
+        elif char == '{':
+            self.tokens.append(Token(TokenType.LEFT_BRACE, char, self.line))
+        elif char == '}':
+            self.tokens.append(Token(TokenType.RIGHT_BRACE, char, self.line))
         # else: ignore other characters for now
 
     def _advance(self):

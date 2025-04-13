@@ -20,5 +20,12 @@ class ScannerTest(unittest.TestCase):
         self.assertEqual(tokens[1].type, TokenType.RIGHT_PAREN)
         self.assertEqual(tokens[2].type, TokenType.EOF)
 
+    def test_braces(self):  # Added brace test
+        scanner = Scanner("{}")
+        tokens = scanner.scan_tokens()
+        self.assertEqual(tokens[0].type, TokenType.LEFT_BRACE)
+        self.assertEqual(tokens[1].type, TokenType.RIGHT_BRACE)
+        self.assertEqual(tokens[2].type, TokenType.EOF)
+
 if __name__ == '__main__':
     unittest.main()
