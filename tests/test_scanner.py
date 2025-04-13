@@ -27,12 +27,18 @@ class ScannerTest(unittest.TestCase):
         self.assertEqual(tokens[1].type, TokenType.RIGHT_BRACE)
         self.assertEqual(tokens[2].type, TokenType.EOF)
 
-    def test_commas_and_semicolons(self):  # Added test for commas and semicolons
+    def test_commas_and_semicolons(self):
         scanner = Scanner(";,")
         tokens = scanner.scan_tokens()
         self.assertEqual(tokens[0].type, TokenType.SEMICOLON)
         self.assertEqual(tokens[1].type, TokenType.COMMA)
         self.assertEqual(tokens[2].type, TokenType.EOF)
+
+    def test_lexical_error(self):
+        with self.assertRaises(Exception) as context:
+            scanner = Scanner("!invalid")
+            scanner.scan_tokens()
+        self.assertTrue("Lexical Error: Invalid character '!' at line 1" in str(context.exception))
 
 if __name__ == '__main__':
     unittest.main()

@@ -25,9 +25,11 @@ class Scanner:
         elif char == '}':
             self.tokens.append(Token(TokenType.RIGHT_BRACE, char, self.line))
         elif char == ',':
-            self.tokens.append(Token(TokenType.COMMA, char, self.line))  # Added for comma
+            self.tokens.append(Token(TokenType.COMMA, char, self.line))
         elif char == ';':
-            self.tokens.append(Token(TokenType.SEMICOLON, char, self.line))  # Added for semicolon
+            self.tokens.append(Token(TokenType.SEMICOLON, char, self.line))
+        else:
+            self._handle_lexical_error(char)  # Handle invalid characters
 
     def _advance(self):
         char = self.source[self.current]
@@ -36,3 +38,7 @@ class Scanner:
 
     def _is_at_end(self):
         return self.current >= len(self.source)
+
+    def _handle_lexical_error(self, char):
+        # Raise an error or log the invalid character with a message
+        raise Exception(f"Lexical Error: Invalid character '{char}' at line {self.line}")
