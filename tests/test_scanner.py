@@ -20,11 +20,18 @@ class ScannerTest(unittest.TestCase):
         self.assertEqual(tokens[1].type, TokenType.RIGHT_PAREN)
         self.assertEqual(tokens[2].type, TokenType.EOF)
 
-    def test_braces(self):  # Added brace test
+    def test_braces(self):
         scanner = Scanner("{}")
         tokens = scanner.scan_tokens()
         self.assertEqual(tokens[0].type, TokenType.LEFT_BRACE)
         self.assertEqual(tokens[1].type, TokenType.RIGHT_BRACE)
+        self.assertEqual(tokens[2].type, TokenType.EOF)
+
+    def test_commas_and_semicolons(self):  # Added test for commas and semicolons
+        scanner = Scanner(";,")
+        tokens = scanner.scan_tokens()
+        self.assertEqual(tokens[0].type, TokenType.SEMICOLON)
+        self.assertEqual(tokens[1].type, TokenType.COMMA)
         self.assertEqual(tokens[2].type, TokenType.EOF)
 
 if __name__ == '__main__':

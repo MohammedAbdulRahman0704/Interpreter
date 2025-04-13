@@ -24,7 +24,10 @@ class Scanner:
             self.tokens.append(Token(TokenType.LEFT_BRACE, char, self.line))
         elif char == '}':
             self.tokens.append(Token(TokenType.RIGHT_BRACE, char, self.line))
-        # else: ignore other characters for now
+        elif char == ',':
+            self.tokens.append(Token(TokenType.COMMA, char, self.line))  # Added for comma
+        elif char == ';':
+            self.tokens.append(Token(TokenType.SEMICOLON, char, self.line))  # Added for semicolon
 
     def _advance(self):
         char = self.source[self.current]

@@ -3,8 +3,10 @@ from enum import Enum, auto
 class TokenType(Enum):
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
-    LEFT_BRACE = auto()  # Added
-    RIGHT_BRACE = auto()  # Added
+    LEFT_BRACE = auto()
+    RIGHT_BRACE = auto()
+    COMMA = auto()  # Added
+    SEMICOLON = auto()  # Added
     EOF = auto()
 
 class Token:
