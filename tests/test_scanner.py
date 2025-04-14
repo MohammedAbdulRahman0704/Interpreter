@@ -50,7 +50,6 @@ class ScannerTest(unittest.TestCase):
     def test_negation_and_inequality(self):
         scanner = Scanner("! !=")
         tokens = scanner.scan_tokens()
-
         self.assertEqual(tokens[0].type, TokenType.BANG)
         self.assertEqual(tokens[0].lexeme, "!")
         self.assertEqual(tokens[1].type, TokenType.BANG_EQUAL)
@@ -60,7 +59,6 @@ class ScannerTest(unittest.TestCase):
     def test_relational_operators(self):
         scanner = Scanner("< <= > >=")
         tokens = scanner.scan_tokens()
-        
         self.assertEqual(tokens[0].type, TokenType.LESS)
         self.assertEqual(tokens[1].type, TokenType.LESS_EQUAL)
         self.assertEqual(tokens[2].type, TokenType.GREATER)

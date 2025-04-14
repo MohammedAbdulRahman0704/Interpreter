@@ -12,7 +12,7 @@ class Scanner:
         while not self._is_at_end():
             self.start = self.current
             self._scan_token()
-        self.tokens.append(Token(TokenType.EOF, "", self.line))
+        self.tokens.append(Token(TokenType.EOF, "", self.line))  # Add EOF token at the end
         return self.tokens
 
     def _scan_token(self):
@@ -44,10 +44,10 @@ class Scanner:
             else:
                 self.tokens.append(Token(TokenType.DIVIDE, char, self.line))  # Regular divide operator
         elif char in [' ', '\r', '\t']:
-            # Ignore whitespace
+            # Ignore whitespace characters (spaces, tabs, carriage returns)
             pass
         elif char == '\n':
-            self.line += 1
+            self.line += 1  # Increment line number on newline
         elif char == '!':
             if self._match('='):
                 self.tokens.append(Token(TokenType.BANG_EQUAL, '!=', self.line))

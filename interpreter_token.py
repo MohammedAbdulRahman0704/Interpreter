@@ -32,14 +32,40 @@ class Token:
 
 # Example scanner method handling identifier
 class Scanner:
-    def _handle_identifier(self, char):
-        lexeme = "identifier_example"  # You would dynamically build this
-        self._add_token(TokenType.IDENTIFIER, lexeme)
+    def __init__(self, source):
+        self.source = source
+        self.tokens = []
+        self.start = 0
+        self.current = 0
+        self.line = 1
+
+    def _advance(self):
+        """Advance to the next character in the source and return the character."""
+        char = self.source[self.current]
+        self.current += 1
+        return char
+
+    def _peek(self):
+        """Returns the character at the current position, or a null character if at the end."""
+        if self._is_at_end():
+            return '\0'
+        return self.source[self.current]
+
+    def _is_at_end(self):
+        """Returns True if the scanner has reached the end of the source."""
+        return self.current >= len(self.source)
 
     def _add_token(self, token_type, lexeme):
-        # Example logic for adding the token to a list
+        """Adds a token to the list of tokens."""
         token = Token(token_type, lexeme, self.line)
         self.tokens.append(token)
+
+    def _handle_identifier(self, char):
+        """Handles identifiers (variable names, keywords, etc.)."""
+        lexeme = char
+        while self._peek().isalnum() or self._peek() == '_':
+            lexeme += self._advance()  # Build identifier dynamically
+        self._add_token(TokenType.IDENTIFIER, lexeme)
 
     def _handle_number(self, char):
         """Handles numbers (integers or floats)."""
