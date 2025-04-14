@@ -39,6 +39,14 @@ class ScannerTest(unittest.TestCase):
             scanner = Scanner("!invalid")
             scanner.scan_tokens()
         self.assertTrue("Lexical Error: Invalid character '!' at line 1" in str(context.exception))
+        
+    def test_assignment_and_equality(self):
+        scanner = Scanner("== =")
+        tokens = scanner.scan_tokens()
+        self.assertEqual(tokens[0].type, TokenType.EQUAL_EQUAL)
+        self.assertEqual(tokens[1].type, TokenType.EQUAL)
+        self.assertEqual(tokens[2].type, TokenType.EOF)
+
 
 if __name__ == '__main__':
     unittest.main()

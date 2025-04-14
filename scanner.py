@@ -28,17 +28,33 @@ class Scanner:
             self.tokens.append(Token(TokenType.COMMA, char, self.line))
         elif char == ';':
             self.tokens.append(Token(TokenType.SEMICOLON, char, self.line))
+        elif char == '=':
+            if self._match('='):
+                self.tokens.append(Token(TokenType.EQUAL_EQUAL, '==', self.line))
+            else:
+                self.tokens.append(Token(TokenType.EQUAL, '=', self.line))
+        elif char in [' ', '\r', '\t']:
+            # Ignore whitespace
+            pass
+        elif char == '\n':
+            self.line += 1
         else:
-            self._handle_lexical_error(char)  # Handle invalid characters
+            self._handle_lexical_error(char)
+
 
     def _advance(self):
         char = self.source[self.current]
         self.current += 1
         return char
 
+    def _match(self, expected):
+        if self._is_at_end(): return False
+        if self.source[self.current] != expected: return False
+        self.current += 1
+        return True
+
     def _is_at_end(self):
         return self.current >= len(self.source)
 
     def _handle_lexical_error(self, char):
-        # Raise an error or log the invalid character with a message
         raise Exception(f"Lexical Error: Invalid character '{char}' at line {self.line}")

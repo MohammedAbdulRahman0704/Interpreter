@@ -8,6 +8,8 @@ class TokenType(Enum):
     COMMA = auto()  # Added
     SEMICOLON = auto()  # Added
     EOF = auto()
+    EQUAL = 8
+    EQUAL_EQUAL = 9
 
 class Token:
     def __init__(self, type_, lexeme, line):
