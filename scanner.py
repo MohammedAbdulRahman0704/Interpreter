@@ -12,7 +12,7 @@ class Scanner:
         while not self._is_at_end():
             self.start = self.current
             self._scan_token()
-        self.tokens.append(Token(TokenType.EOF, "", self.line))  # Add EOF token at the end
+        self.tokens.append(Token(TokenType.EOF, "", self.line))
         return self.tokens
 
     def _scan_token(self):
@@ -44,10 +44,10 @@ class Scanner:
             else:
                 self.tokens.append(Token(TokenType.DIVIDE, char, self.line))  # Regular divide operator
         elif char in [' ', '\r', '\t']:
-            # Ignore whitespace characters (spaces, tabs, carriage returns)
+            # Ignore whitespace
             pass
         elif char == '\n':
-            self.line += 1  # Increment line number on newline
+            self.line += 1
         elif char == '!':
             if self._match('='):
                 self.tokens.append(Token(TokenType.BANG_EQUAL, '!=', self.line))
@@ -99,12 +99,13 @@ class Scanner:
             self._advance()
 
     def _skip_block_comment(self):
-        """Skips over a multi-line comment."""
+        """Skips over a multi-line comment, raises an error if the block is not properly closed."""
         while not self._is_at_end():
             char = self._advance()
             if char == '*' and self._peek() == '/':
                 self._advance()  # Skip the '/'
-                break
+                return
+        raise Exception(f"Lexical Error: Unmatched block comment starting at line {self.line}")
 
     def _handle_identifier(self, char):
         """Handles identifiers (variable names, keywords, etc.)."""

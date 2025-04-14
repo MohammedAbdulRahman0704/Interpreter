@@ -93,6 +93,12 @@ class ScannerTest(unittest.TestCase):
         self.assertEqual(tokens[2].type, TokenType.NUMBER)
         self.assertEqual(tokens[3].type, TokenType.SEMICOLON)
         self.assertEqual(tokens[4].type, TokenType.EOF)
+    
+    def test_unmatched_multiline_comment(self):
+        scanner = Scanner("/* This is a multi-line comment")
+        with self.assertRaises(Exception) as context:
+            scanner.scan_tokens()
+        self.assertTrue("Lexical Error: Unmatched block comment" in str(context.exception))
 
 if __name__ == '__main__':
     unittest.main()
