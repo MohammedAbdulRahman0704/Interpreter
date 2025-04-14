@@ -4,6 +4,7 @@ class Scanner:
     def __init__(self, source):
         self.source = source
         self.tokens = []
+        self.start = 0
         self.current = 0
         self.line = 1
 
@@ -43,9 +44,12 @@ class Scanner:
                 self.tokens.append(Token(TokenType.BANG_EQUAL, '!=', self.line))
             else:
                 self.tokens.append(Token(TokenType.BANG, '!', self.line))
+        elif char == '<':
+            self._add_token(TokenType.LESS_EQUAL if self._match('=') else TokenType.LESS)
+        elif char == '>':
+            self._add_token(TokenType.GREATER_EQUAL if self._match('=') else TokenType.GREATER)
         else:
             self._handle_lexical_error(char)
-
 
     def _advance(self):
         char = self.source[self.current]
@@ -63,3 +67,8 @@ class Scanner:
 
     def _handle_lexical_error(self, char):
         raise Exception(f"Lexical Error: Invalid character '{char}' at line {self.line}")
+
+    def _add_token(self, type, lexeme=None):
+        if lexeme is None:
+            lexeme = self.source[self.start:self.current]
+        self.tokens.append(Token(type, lexeme, self.line))
