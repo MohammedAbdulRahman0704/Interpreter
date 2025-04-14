@@ -67,6 +67,34 @@ class ScannerTest(unittest.TestCase):
         self.assertEqual(tokens[3].type, TokenType.GREATER_EQUAL)
         self.assertEqual(tokens[4].type, TokenType.EOF)
 
+    # Test Division operator
+    def test_divide_operator(self):
+        scanner = Scanner("a / b")
+        tokens = scanner.scan_tokens()
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[1].type, TokenType.DIVIDE)
+        self.assertEqual(tokens[2].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[3].type, TokenType.EOF)
+
+    # Test Single-line Comment
+    def test_single_line_comment(self):
+        scanner = Scanner("a = 5; // This is a comment")
+        tokens = scanner.scan_tokens()
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[1].type, TokenType.EQUAL)
+        self.assertEqual(tokens[2].type, TokenType.NUMBER)
+        self.assertEqual(tokens[3].type, TokenType.SEMICOLON)
+        self.assertEqual(tokens[4].type, TokenType.EOF)
+
+    # Test Multi-line Comment
+    def test_multiline_comment(self):
+        scanner = Scanner("/* This is a multi-line comment */ a = 10;")
+        tokens = scanner.scan_tokens()
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[1].type, TokenType.EQUAL)
+        self.assertEqual(tokens[2].type, TokenType.NUMBER)
+        self.assertEqual(tokens[3].type, TokenType.SEMICOLON)
+        self.assertEqual(tokens[4].type, TokenType.EOF)
 
 if __name__ == '__main__':
     unittest.main()
