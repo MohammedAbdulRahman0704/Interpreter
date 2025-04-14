@@ -19,15 +19,16 @@ class TokenType(Enum):
     DIVIDE = 16
     IDENTIFIER = 17  # Added identifier
     NUMBER = "NUMBER"
+    STRING = 19
 
 class Token:
-    def __init__(self, type_, lexeme, line):
-        self.type = type_
-        self.lexeme = lexeme
+    def __init__(self, type, lexeme, line):
+        self.type = type
+        self.lexeme = lexeme  # You can use this to store the string value
         self.line = line
 
     def __repr__(self):
-        return f"{self.type.name} '{self.lexeme}' (line {self.line})"
+        return f"Token({self.type}, {self.lexeme}, {self.line})"
 
 
 # Example scanner method handling identifier
@@ -43,6 +44,8 @@ class Scanner:
         """Advance to the next character in the source and return the character."""
         char = self.source[self.current]
         self.current += 1
+        if char == '\n':  # Increment line number on newline
+            self.line += 1
         return char
 
     def _peek(self):
@@ -55,10 +58,9 @@ class Scanner:
         """Returns True if the scanner has reached the end of the source."""
         return self.current >= len(self.source)
 
-    def _add_token(self, token_type, lexeme):
-        """Adds a token to the list of tokens."""
-        token = Token(token_type, lexeme, self.line)
-        self.tokens.append(token)
+    def _add_token(self, type_, literal=None):
+        text = self.source[self.start:self.current]
+        self.tokens.append(Token(type_, text, literal, self.line))
 
     def _handle_identifier(self, char):
         """Handles identifiers (variable names, keywords, etc.)."""
@@ -77,3 +79,39 @@ class Scanner:
             while self._peek().isdigit():
                 lexeme += self._advance()
         self._add_token(TokenType.NUMBER, lexeme)  # Correct usage of TokenType.NUMBER
+        
+    def _handle_string(self):
+        string_value = ""
+        while True:
+            char = self._advance()
+
+            if char == '"':  # End of string literal
+                break
+            elif char == '\n':  # Newline within string (should not happen in a valid string)
+                self.line += 1
+                self._handle_lexical_error("Unterminated string literal")
+            elif char == '\\':  # Escape sequence
+                next_char = self._peek()
+                if next_char == 'n':
+                    string_value += '\n'
+                    self._advance()  # Skip the 'n'
+                elif next_char == 't':
+                    string_value += '\t'
+                    self._advance()  # Skip the 't'
+                elif next_char == '\\':
+                    string_value += '\\'
+                    self._advance()  # Skip the '\\'
+                elif next_char == '"':
+                    string_value += '"'
+                    self._advance()  # Skip the '"'
+                else:
+                    string_value += '\\' + next_char
+                    self._advance()  # Skip the next character
+            else:
+                string_value += char  # Regular character
+
+        # If we finish the loop without encountering a closing quote, raise an error
+        if self._peek() != '"':
+            self._handle_lexical_error("Unterminated string literal")
+
+        self.tokens.append(Token(TokenType.STRING, string_value, self.line))

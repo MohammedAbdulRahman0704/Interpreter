@@ -6,20 +6,24 @@ class Scanner:
         self.tokens = []
         self.start = 0
         self.current = 0
-        self.line = 1
-
+        self.line = 1  # Initialize line number
+        self.end = len(source)
+    
     def scan_tokens(self):
-        while not self._is_at_end():
+        while self.current < self.end:
             self.start = self.current
-            self._scan_token()
-        self.tokens.append(Token(TokenType.EOF, "", self.line))
+            self._scan_token()  # Call _scan_token to scan each token
+        
+        self.tokens.append(Token(TokenType.EOF, "", self.line))  # Adding EOF token
         return self.tokens
 
     def _scan_token(self):
         char = self._advance()
 
         # Handling for various symbols
-        if char == '(':
+        if char == '"':  # Start of a string literal
+            self._handle_string()
+        elif char == '(':
             self.tokens.append(Token(TokenType.LEFT_PAREN, char, self.line))
         elif char == ')':
             self.tokens.append(Token(TokenType.RIGHT_PAREN, char, self.line))
@@ -64,6 +68,41 @@ class Scanner:
         else:
             self._handle_lexical_error(char)
 
+    def _handle_string(self):
+        string_value = ""
+        while self._peek() != '"' and not self._is_at_end():
+            char = self._advance()
+            if char == '\n':
+                self.line += 1
+                self._handle_lexical_error("Unterminated string literal")
+            elif char == '\\':  # Escape sequence
+                next_char = self._peek()
+                if next_char == 'n':
+                    string_value += '\n'
+                    self._advance()
+                elif next_char == 't':
+                    string_value += '\t'
+                    self._advance()
+                elif next_char == '\\':
+                    string_value += '\\'
+                    self._advance()
+                elif next_char == '"':
+                    string_value += '"'
+                    self._advance()
+                else:
+                    string_value += '\\' + next_char
+                    self._advance()
+            else:
+                string_value += char
+
+        if self._is_at_end():
+            self._handle_lexical_error("Unterminated string literal")
+            return  # Important to return after raising the error
+
+        # Consume the closing quote
+        self._advance()
+        self.tokens.append(Token(TokenType.STRING, string_value, self.line))
+
     def _advance(self):
         """Advance to the next character in the source and return the character."""
         char = self.source[self.current]
@@ -71,21 +110,17 @@ class Scanner:
         return char
 
     def _match(self, expected):
-        """Checks if the next character matches the expected character and advances."""
-        if self._is_at_end():
-            return False
-        if self.source[self.current] != expected:
-            return False
-        self.current += 1
-        return True
+        if self.current < self.end and self.source[self.current] == expected:
+            self.current += 1
+            return True
+        return False
 
     def _is_at_end(self):
         """Returns True if the scanner has reached the end of the source."""
         return self.current >= len(self.source)
 
-    def _handle_lexical_error(self, char):
-        """Raises an exception when an invalid character is encountered."""
-        raise Exception(f"Lexical Error: Invalid character '{char}' at line {self.line}")
+    def _handle_lexical_error(self, message):
+        raise Exception(f"Lexical Error at line {self.line}: {message}")
 
     def _add_token(self, type, lexeme=None):
         """Adds a token to the list of tokens."""
@@ -108,10 +143,17 @@ class Scanner:
         raise Exception(f"Lexical Error: Unmatched block comment starting at line {self.line}")
 
     def _handle_identifier(self, char):
-        """Handles identifiers (variable names, keywords, etc.)."""
-        while self._peek().isalnum() or self._peek() == '_':
-            self._advance()
-        self._add_token(TokenType.IDENTIFIER)
+        # Handle identifiers, which may include alphabetic characters and underscores
+        identifier = char
+        while True:
+            next_char = self._peek()  # Peek at the next character
+            if next_char and (next_char.isalnum() or next_char == '_'):  # Only proceed if it's a valid character
+                identifier += self._advance()  # Advance and add to the identifier
+            else:
+                break
+
+        # Append the identifier token
+        self.tokens.append(Token(TokenType.IDENTIFIER, identifier, self.line))
 
     def _handle_number(self, char):
         """Handles numbers (integers or floats)."""
@@ -120,12 +162,12 @@ class Scanner:
             lexeme += self._advance()
         if self._peek() == '.':  # Check for decimal point (float)
             lexeme += self._advance()
+            if not self._peek().isdigit():
+                self._handle_lexical_error('Invalid number format')
             while self._peek().isdigit():
                 lexeme += self._advance()
         self._add_token(TokenType.NUMBER, lexeme)
 
     def _peek(self):
-        """Returns the character at the current position, or a null character if at the end."""
-        if self._is_at_end():
-            return '\0'
-        return self.source[self.current]
+        # Return the next character or a special marker indicating end of input
+        return self.source[self.current] if self.current < len(self.source) else ''
