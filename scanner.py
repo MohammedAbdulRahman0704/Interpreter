@@ -38,6 +38,11 @@ class Scanner:
             pass
         elif char == '\n':
             self.line += 1
+        elif char == '!':
+            if self._match('='):
+                self.tokens.append(Token(TokenType.BANG_EQUAL, '!=', self.line))
+            else:
+                self.tokens.append(Token(TokenType.BANG, '!', self.line))
         else:
             self._handle_lexical_error(char)
 

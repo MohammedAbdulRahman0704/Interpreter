@@ -35,11 +35,11 @@ class ScannerTest(unittest.TestCase):
         self.assertEqual(tokens[2].type, TokenType.EOF)
 
     def test_lexical_error(self):
+        scanner = Scanner("@")
         with self.assertRaises(Exception) as context:
-            scanner = Scanner("!invalid")
             scanner.scan_tokens()
-        self.assertTrue("Lexical Error: Invalid character '!' at line 1" in str(context.exception))
-        
+        self.assertTrue("Lexical Error: Invalid character '@'" in str(context.exception))
+
     def test_assignment_and_equality(self):
         scanner = Scanner("== =")
         tokens = scanner.scan_tokens()
@@ -47,6 +47,14 @@ class ScannerTest(unittest.TestCase):
         self.assertEqual(tokens[1].type, TokenType.EQUAL)
         self.assertEqual(tokens[2].type, TokenType.EOF)
 
+    def test_negation_and_inequality(self):
+        scanner = Scanner("! !=")
+        tokens = scanner.scan_tokens()
+        self.assertEqual(tokens[0].type, TokenType.BANG)
+        self.assertEqual(tokens[0].lexeme, "!")
+        self.assertEqual(tokens[1].type, TokenType.BANG_EQUAL)
+        self.assertEqual(tokens[1].lexeme, "!=")
+        self.assertEqual(tokens[2].type, TokenType.EOF)
 
 if __name__ == '__main__':
     unittest.main()

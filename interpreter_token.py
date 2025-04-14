@@ -10,6 +10,8 @@ class TokenType(Enum):
     EOF = auto()
     EQUAL = 8
     EQUAL_EQUAL = 9
+    BANG = auto()          # !
+    BANG_EQUAL = auto()    # !=
 
 class Token:
     def __init__(self, type_, lexeme, line):
