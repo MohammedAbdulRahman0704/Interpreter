@@ -10,6 +10,24 @@ class Scanner:
         self.current = 0
         self.line = 1  # Initialize line number
         self.end = len(source)
+        self.keywords = {
+            "and":    TokenType.AND,
+            "class":  TokenType.CLASS,
+            "else":   TokenType.ELSE,
+            "false":  TokenType.FALSE,
+            "for":    TokenType.FOR,
+            "fun":    TokenType.FUN,
+            "if":     TokenType.IF,
+            "nil":    TokenType.NIL,
+            "or":     TokenType.OR,
+            "print":  TokenType.PRINT,
+            "return": TokenType.RETURN,
+            "super":  TokenType.SUPER,
+            "this":   TokenType.THIS,
+            "true":   TokenType.TRUE,
+            "var":    TokenType.VAR,
+            "while":  TokenType.WHILE
+        }
 
     def scan_tokens(self):
         while not self._is_at_end():
@@ -21,8 +39,8 @@ class Scanner:
     def _scan_token(self):
         char = self._advance()
 
-        if char.isalpha() or char == '_':  # Start of an identifier
-            self._handle_identifier()
+        if char.isalpha() or char == '_':  # Start of an identifier or keyword
+            self._handle_identifier_or_keyword()
         elif char == '"':  # Start of a string literal
             self._handle_string()
         elif char == '(':
@@ -138,16 +156,13 @@ class Scanner:
                 self.line += 1
         raise Exception(f"Lexical Error: Unmatched block comment starting at line {self.line}")
 
-    def _handle_identifier(self):
-        """Handles identifiers and keywords."""
+    def _handle_identifier_or_keyword(self):
+        """Handles identifiers and reserved words (keywords)."""
         while self._peek().isalnum() or self._peek() == '_':
             self._advance()
 
         text = self.source[self.start:self.current]
-        token_type = TokenType.IDENTIFIER # Default to identifier
-        # In a more complete scanner, you would check for keywords here
-        # if text in keywords:
-        #     token_type = keywords[text]
+        token_type = self.keywords.get(text, TokenType.IDENTIFIER)
         self._add_token(token_type)
 
     def _handle_number(self):

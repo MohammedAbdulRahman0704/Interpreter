@@ -23,6 +23,24 @@ class TokenType(Enum):
     NUMBER = auto()
     STRING = auto()
 
+    # Reserved words (keywords)
+    AND = auto()
+    CLASS = auto()
+    ELSE = auto()
+    FALSE = auto()
+    FUN = auto()
+    FOR = auto()
+    IF = auto()
+    NIL = auto()
+    OR = auto()
+    PRINT = auto()
+    RETURN = auto()
+    SUPER = auto()
+    THIS = auto()
+    TRUE = auto()
+    VAR = auto()
+    WHILE = auto()
+
 class Token:
     def __init__(self, type, lexeme, line, literal=None):
         self.type = type
@@ -58,7 +76,7 @@ class Scanner:
         if self.current + 1 >= len(self.source):
             return '\0'
         return self.source[self.current + 1]
-
+    
     def _is_at_end(self):
         return self.current >= len(self.source)
 
@@ -66,10 +84,13 @@ class Scanner:
         text = self.source[self.start:self.current]
         self.tokens.append(Token(type_, text, self.line, literal))
 
-    def _handle_identifier(self):
+    def _handle_identifier_or_keyword(self):
         while self._peek().isalnum() or self._peek() == '_':
             self._advance()
-        self._add_token(TokenType.IDENTIFIER)
+
+        text = self.source[self.start:self.current]
+        token_type = self.keywords.get(text, TokenType.IDENTIFIER)
+        self._add_token(token_type)
 
     def _handle_number(self):
         while self._peek().isdigit():

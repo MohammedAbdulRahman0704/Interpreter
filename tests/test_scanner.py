@@ -235,5 +235,74 @@ class ScannerTest(unittest.TestCase):
         self.assertEqual(tokens[1].type, TokenType.SEMICOLON)
         self.assertEqual(tokens[2].type, TokenType.EOF)
 
+    # Scanning: Reserved words
+    def test_reserved_word_if(self):
+        source = "if"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 2)
+        self.assertEqual(tokens[0].type, TokenType.IF)
+        self.assertEqual(tokens[0].lexeme, "if")
+        self.assertEqual(tokens[1].type, TokenType.EOF)
+
+    def test_reserved_word_else(self):
+        source = "else"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 2)
+        self.assertEqual(tokens[0].type, TokenType.ELSE)
+        self.assertEqual(tokens[0].lexeme, "else")
+        self.assertEqual(tokens[1].type, TokenType.EOF)
+
+    def test_reserved_word_while(self):
+        source = "while"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 2)
+        self.assertEqual(tokens[0].type, TokenType.WHILE)
+        self.assertEqual(tokens[0].lexeme, "while")
+        self.assertEqual(tokens[1].type, TokenType.EOF)
+
+    def test_reserved_word_true(self):
+        source = "true"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 2)
+        self.assertEqual(tokens[0].type, TokenType.TRUE)
+        self.assertEqual(tokens[0].lexeme, "true")
+        self.assertEqual(tokens[1].type, TokenType.EOF)
+
+    def test_reserved_word_false(self):
+        source = "false"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 2)
+        self.assertEqual(tokens[0].type, TokenType.FALSE)
+        self.assertEqual(tokens[0].lexeme, "false")
+        self.assertEqual(tokens[1].type, TokenType.EOF)
+
+    def test_reserved_words_separated_by_whitespace(self):
+        source = "if  else\twhile\ntrue false"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 6)
+        self.assertEqual(tokens[0].type, TokenType.IF)
+        self.assertEqual(tokens[1].type, TokenType.ELSE)
+        self.assertEqual(tokens[2].type, TokenType.WHILE)
+        self.assertEqual(tokens[3].type, TokenType.TRUE)
+        self.assertEqual(tokens[4].type, TokenType.FALSE)
+        self.assertEqual(tokens[5].type, TokenType.EOF)
+
+    def test_reserved_word_as_part_of_identifier(self):
+        source = "ifelse whileLoop"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 3)
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[0].lexeme, "ifelse")
+        self.assertEqual(tokens[1].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[1].lexeme, "whileLoop")
+        self.assertEqual(tokens[2].type, TokenType.EOF)
+
 if __name__ == '__main__':
     unittest.main()
