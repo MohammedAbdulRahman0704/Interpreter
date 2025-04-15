@@ -1,7 +1,7 @@
 # parser.py
 
 from interpreter_token import Token, TokenType
-from ast_1 import Expr, Literal, BooleanLiteral, NilLiteral, NumberLiteral, Visitor
+from ast_1 import Expr, Literal, BooleanLiteral, NilLiteral, NumberLiteral, Visitor, StringLiteral
 
 class Parser:
     def __init__(self, tokens):
@@ -27,6 +27,8 @@ class Parser:
             return NilLiteral()
         if self._match(TokenType.NUMBER):
             return NumberLiteral(self._previous().literal) # Get the actual number value
+        if self._match(TokenType.STRING):
+            return StringLiteral(self._previous().literal) # Get the actual string value
 
         # If no literal is matched, we might need to handle other expression types
         # or report an error. For now, we'll return None and handle errors later

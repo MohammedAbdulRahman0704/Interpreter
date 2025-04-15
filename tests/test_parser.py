@@ -3,7 +3,7 @@
 import unittest
 from scanner import Scanner
 from parser import Parser
-from ast_1 import BooleanLiteral, NilLiteral, NumberLiteral
+from ast_1 import BooleanLiteral, NilLiteral, NumberLiteral, StringLiteral
 
 class ParserTest(unittest.TestCase):
     def test_parse_true(self):
@@ -61,6 +61,30 @@ class ParserTest(unittest.TestCase):
         expression = parser.parse()
         self.assertIsInstance(expression, NumberLiteral)
         self.assertEqual(expression.value, 5.0)
+
+    def test_parse_string(self):
+        scanner = Scanner('"hello"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, StringLiteral)
+        self.assertEqual(expression.value, "hello")
+
+    def test_parse_string_with_spaces(self):
+        scanner = Scanner('"hello world"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, StringLiteral)
+        self.assertEqual(expression.value, "hello world")
+
+    def test_parse_string_with_escape_sequences(self):
+        scanner = Scanner('"hello\\nworld"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, StringLiteral)
+        self.assertEqual(expression.value, "hello\nworld")
 
 if __name__ == '__main__':
     unittest.main()

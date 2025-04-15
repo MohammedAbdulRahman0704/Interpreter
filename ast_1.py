@@ -31,6 +31,16 @@ class NilLiteral(Literal):
 class NumberLiteral(Literal):
     pass
 
+    def accept(self, visitor):
+        return visitor.visit_number_literal_expr(self)
+
+# Represents string literals
+class StringLiteral(Literal):
+    pass
+
+    def accept(self, visitor):
+        return visitor.visit_string_literal_expr(self)
+
 class Visitor(ABC):
     @abstractmethod
     def visit_literal_expr(self, expr: Literal):
@@ -42,6 +52,10 @@ class Visitor(ABC):
 
     @abstractmethod
     def visit_number_literal_expr(self, expr: NumberLiteral):
+        pass
+
+    @abstractmethod
+    def visit_string_literal_expr(self, expr: StringLiteral):
         pass
 
 # ... (other visit methods will be added later) ...
