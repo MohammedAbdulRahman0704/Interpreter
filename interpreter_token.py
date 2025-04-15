@@ -1,35 +1,35 @@
 from enum import Enum, auto
 
 class TokenType(Enum):
-    LEFT_PAREN = 1
-    RIGHT_PAREN = 2
-    LEFT_BRACE = 3
-    RIGHT_BRACE = 4
-    COMMA = 5
-    SEMICOLON = 6
-    EOF = 7
-    EQUAL = 8
-    EQUAL_EQUAL = 9
-    BANG = 10
-    BANG_EQUAL = 11
-    LESS = 12
-    LESS_EQUAL = 13
-    GREATER = 14
-    GREATER_EQUAL = 15
-    DIVIDE = 16
-    IDENTIFIER = 17  # Added identifier
-    NUMBER = "NUMBER"
-    STRING = 19
+    LEFT_PAREN = auto()
+    RIGHT_PAREN = auto()
+    LEFT_BRACE = auto()
+    RIGHT_BRACE = auto()
+    COMMA = auto()
+    SEMICOLON = auto()
+    EOF = auto()
+    EQUAL = auto()
+    EQUAL_EQUAL = auto()
+    BANG = auto()
+    BANG_EQUAL = auto()
+    LESS = auto()
+    LESS_EQUAL = auto()
+    GREATER = auto()
+    GREATER_EQUAL = auto()
+    DIVIDE = auto()
+    IDENTIFIER = auto()
+    NUMBER = auto()
+    STRING = auto()
 
 class Token:
-    def __init__(self, type, lexeme, line):
+    def __init__(self, type, lexeme, line, literal=None):
         self.type = type
-        self.lexeme = lexeme  # You can use this to store the string value
+        self.lexeme = lexeme
         self.line = line
+        self.literal = literal
 
     def __repr__(self):
-        return f"Token({self.type}, {self.lexeme}, {self.line})"
-
+        return f'{self.type} {self.lexeme} {self.literal}'
 
 # Example scanner method handling identifier
 class Scanner:
@@ -41,77 +41,77 @@ class Scanner:
         self.line = 1
 
     def _advance(self):
-        """Advance to the next character in the source and return the character."""
         char = self.source[self.current]
         self.current += 1
-        if char == '\n':  # Increment line number on newline
+        if char == '\n':
             self.line += 1
         return char
 
     def _peek(self):
-        """Returns the character at the current position, or a null character if at the end."""
         if self._is_at_end():
             return '\0'
         return self.source[self.current]
 
+    def _peek_next(self):
+        if self.current + 1 >= len(self.source):
+            return '\0'
+        return self.source[self.current + 1]
+
     def _is_at_end(self):
-        """Returns True if the scanner has reached the end of the source."""
         return self.current >= len(self.source)
 
     def _add_token(self, type_, literal=None):
         text = self.source[self.start:self.current]
-        self.tokens.append(Token(type_, text, literal, self.line))
+        self.tokens.append(Token(type_, text, self.line, literal))
 
     def _handle_identifier(self, char):
-        """Handles identifiers (variable names, keywords, etc.)."""
-        lexeme = char
         while self._peek().isalnum() or self._peek() == '_':
-            lexeme += self._advance()  # Build identifier dynamically
-        self._add_token(TokenType.IDENTIFIER, lexeme)
+            self._advance()
+        self._add_token(TokenType.IDENTIFIER)
 
     def _handle_number(self, char):
-        """Handles numbers (integers or floats)."""
-        lexeme = char
         while self._peek().isdigit():
-            lexeme += self._advance()
-        if self._peek() == '.':  # Check for decimal point (float)
-            lexeme += self._advance()
+            self._advance()
+
+        if self._peek() == '.' and self._peek_next().isdigit():
+            self._advance()  # consume '.'
             while self._peek().isdigit():
-                lexeme += self._advance()
-        self._add_token(TokenType.NUMBER, lexeme)  # Correct usage of TokenType.NUMBER
-        
+                self._advance()
+
+        lexeme = self.source[self.start:self.current]
+        number_value = float(lexeme) if '.' in lexeme else int(lexeme)
+        self._add_token(TokenType.NUMBER, number_value)
+
     def _handle_string(self):
         string_value = ""
-        while True:
+        while not self._is_at_end() and self._peek() != '"':
             char = self._advance()
-
-            if char == '"':  # End of string literal
-                break
-            elif char == '\n':  # Newline within string (should not happen in a valid string)
+            if char == '\n':
                 self.line += 1
                 self._handle_lexical_error("Unterminated string literal")
-            elif char == '\\':  # Escape sequence
-                next_char = self._peek()
+                return
+            elif char == '\\':
+                next_char = self._advance()
                 if next_char == 'n':
                     string_value += '\n'
-                    self._advance()  # Skip the 'n'
                 elif next_char == 't':
                     string_value += '\t'
-                    self._advance()  # Skip the 't'
-                elif next_char == '\\':
-                    string_value += '\\'
-                    self._advance()  # Skip the '\\'
                 elif next_char == '"':
                     string_value += '"'
-                    self._advance()  # Skip the '"'
+                elif next_char == '\\':
+                    string_value += '\\'
                 else:
                     string_value += '\\' + next_char
-                    self._advance()  # Skip the next character
             else:
-                string_value += char  # Regular character
+                string_value += char
 
-        # If we finish the loop without encountering a closing quote, raise an error
-        if self._peek() != '"':
+        if self._is_at_end():
             self._handle_lexical_error("Unterminated string literal")
+            return
 
-        self.tokens.append(Token(TokenType.STRING, string_value, self.line))
+        self._advance()  # consume closing "
+        lexeme = self.source[self.start:self.current]
+        self.tokens.append(Token(TokenType.STRING, lexeme, self.line, string_value))
+
+    def _handle_lexical_error(self, message):
+        raise Exception(f"Lexical Error at line {self.line}: {message}")

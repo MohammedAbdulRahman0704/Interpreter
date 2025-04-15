@@ -111,7 +111,8 @@ class ScannerTest(unittest.TestCase):
 
         self.assertEqual(len(tokens), 2)  # Expect two tokens: STRING and EOF
         self.assertEqual(tokens[0].type, TokenType.STRING)
-        self.assertEqual(tokens[0].lexeme, "Hello, World!")
+        self.assertEqual(tokens[0].lexeme, '"Hello, World!"') # Lexeme includes the quotes
+        self.assertEqual(tokens[0].literal, "Hello, World!") # Literal is the actual string value
         self.assertEqual(tokens[0].line, 1)  # Ensure the line is correct
 
     def test_unterminated_string_literal(self):
@@ -123,21 +124,22 @@ class ScannerTest(unittest.TestCase):
             scanner.scan_tokens()
 
         print(f"Exception message: {context.exception}")  # Print the exception to debug
-        
+
         # Check if the exception message contains 'Unterminated string literal'
         self.assertTrue('Unterminated string literal' in str(context.exception))
 
     def test_string_with_escape_sequences(self):
-        source = '"Hello\\nWorld"'
+        source = '"Hello\\\\nWorld"' # Corrected escape sequence for backslash
         scanner = Scanner(source)
         tokens = scanner.scan_tokens()
 
-        self.assertEqual(tokens[0].lexeme, "Hello\nWorld")  # Access lexeme, not literal
+        self.assertEqual(tokens[0].literal, "Hello\\nWorld")  # Access literal after escape sequence processing
 
     # Whitespace and newlines
     def test_whitespace(self):
         scanner = Scanner("   \t\n")
         tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 1)
         self.assertEqual(tokens[0].type, TokenType.EOF)
 
     def test_newline(self):
@@ -152,6 +154,22 @@ class ScannerTest(unittest.TestCase):
         self.assertEqual(tokens[6].type, TokenType.NUMBER)
         self.assertEqual(tokens[7].type, TokenType.SEMICOLON)
         self.assertEqual(tokens[8].type, TokenType.EOF)
+
+    def test_number_literals(self):
+        source = "123 45.67 0.001"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+
+        self.assertEqual(tokens[0].type, TokenType.NUMBER)
+        self.assertEqual(tokens[0].literal, 123)
+
+        self.assertEqual(tokens[1].type, TokenType.NUMBER)
+        self.assertEqual(tokens[1].literal, 45.67)
+
+        self.assertEqual(tokens[2].type, TokenType.NUMBER)
+        self.assertEqual(tokens[2].literal, 0.001)
+
+        self.assertEqual(tokens[3].type, TokenType.EOF)
 
 if __name__ == '__main__':
     unittest.main()
