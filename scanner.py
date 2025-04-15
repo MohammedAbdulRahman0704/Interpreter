@@ -77,6 +77,11 @@ class Scanner:
             self._add_token(TokenType.GREATER_EQUAL if self._match('=') else TokenType.GREATER)
         elif char.isdigit():  # Check if it's a number
             self._handle_number()
+        elif char == '.':  # Handle numbers starting with a decimal
+            if self._peek().isdigit():
+                self._handle_number()
+            else:
+                self._handle_lexical_error(f"Unexpected character: {char}")
         else:
             self._handle_lexical_error(f"Unexpected character: {char}")
 
@@ -167,19 +172,23 @@ class Scanner:
 
     def _handle_number(self):
         """Handles number literals."""
+        is_float = False
         while self._peek().isdigit():
             self._advance()
 
         # Look for a fractional part
         if self._peek() == '.' and self._peek_next().isdigit():
+            is_float = True
             self._advance() # Consume the '.'
-
             while self._peek().isdigit():
                 self._advance()
+        elif self._peek() == '.': # Handle trailing decimal
+            is_float = True
+            self._advance()
 
         lexeme = self.source[self.start:self.current]
         try:
-            number_value = float(lexeme) if '.' in lexeme else int(lexeme)
+            number_value = float(lexeme) if is_float or '.' in lexeme else int(lexeme)
             self._add_token(TokenType.NUMBER, number_value)
         except ValueError:
             self._handle_lexical_error(f"Invalid number format: {lexeme}")

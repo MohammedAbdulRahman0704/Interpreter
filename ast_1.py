@@ -1,3 +1,5 @@
+# ast_1.py
+
 from abc import ABC, abstractmethod
 from interpreter_token import Token
 
@@ -13,18 +15,21 @@ class Literal(Expr):
     def accept(self, visitor):
         return visitor.visit_literal_expr(self)
 
-# Represents 'true', 'false', or 'nil'
+# Represents 'true' or 'false'
 class BooleanLiteral(Literal):
     pass
 
+# Represents 'nil'
 class NilLiteral(Literal):
     def __init__(self):
-        super().__init__(None) # Nil has a value of None
+        super().__init__(None)
 
     def accept(self, visitor):
         return visitor.visit_nil_literal_expr(self)
 
-# ... (other expression types will be added later) ...
+# Represents number literals (integers and floats)
+class NumberLiteral(Literal):
+    pass
 
 class Visitor(ABC):
     @abstractmethod
@@ -33,6 +38,10 @@ class Visitor(ABC):
 
     @abstractmethod
     def visit_nil_literal_expr(self, expr: NilLiteral):
+        pass
+
+    @abstractmethod
+    def visit_number_literal_expr(self, expr: NumberLiteral):
         pass
 
 # ... (other visit methods will be added later) ...
