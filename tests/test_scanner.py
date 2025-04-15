@@ -1,3 +1,5 @@
+# tests/test_scanner.py
+
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -170,6 +172,68 @@ class ScannerTest(unittest.TestCase):
         self.assertEqual(tokens[2].literal, 0.001)
 
         self.assertEqual(tokens[3].type, TokenType.EOF)
+
+    # Scanning: Identifiers
+    def test_single_identifier(self):
+        source = "variable"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 2)
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[0].lexeme, "variable")
+        self.assertEqual(tokens[1].type, TokenType.EOF)
+
+    def test_identifier_with_underscore(self):
+        source = "my_variable"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 2)
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[0].lexeme, "my_variable")
+        self.assertEqual(tokens[1].type, TokenType.EOF)
+
+    def test_identifier_with_numbers(self):
+        source = "count123"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 2)
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[0].lexeme, "count123")
+        self.assertEqual(tokens[1].type, TokenType.EOF)
+
+    def test_identifier_starting_with_underscore(self):
+        source = "_value"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 2)
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[0].lexeme, "_value")
+        self.assertEqual(tokens[1].type, TokenType.EOF)
+
+    def test_identifiers_separated_by_whitespace(self):
+        source = "var1   var_two\tvar3\n_var4"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 5)
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[0].lexeme, "var1")
+        self.assertEqual(tokens[1].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[1].lexeme, "var_two")
+        self.assertEqual(tokens[2].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[2].lexeme, "var3")
+        self.assertEqual(tokens[3].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[3].lexeme, "_var4")
+        self.assertEqual(tokens[4].type, TokenType.EOF)
+
+    def test_identifier_followed_by_symbol(self):
+        source = "variable;"
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        self.assertEqual(len(tokens), 3)
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[0].lexeme, "variable")
+        self.assertEqual(tokens[1].type, TokenType.SEMICOLON)
+        self.assertEqual(tokens[2].type, TokenType.EOF)
 
 if __name__ == '__main__':
     unittest.main()

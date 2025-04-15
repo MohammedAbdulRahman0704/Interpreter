@@ -1,3 +1,5 @@
+# interpreter_token.py
+
 from enum import Enum, auto
 
 class TokenType(Enum):
@@ -64,12 +66,12 @@ class Scanner:
         text = self.source[self.start:self.current]
         self.tokens.append(Token(type_, text, self.line, literal))
 
-    def _handle_identifier(self, char):
+    def _handle_identifier(self):
         while self._peek().isalnum() or self._peek() == '_':
             self._advance()
         self._add_token(TokenType.IDENTIFIER)
 
-    def _handle_number(self, char):
+    def _handle_number(self):
         while self._peek().isdigit():
             self._advance()
 

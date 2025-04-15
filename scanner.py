@@ -1,3 +1,5 @@
+# scanner.py
+
 from interpreter_token import TokenType, Token
 
 class Scanner:
@@ -19,21 +21,22 @@ class Scanner:
     def _scan_token(self):
         char = self._advance()
 
-        # Handling for various symbols
-        if char == '"':  # Start of a string literal
+        if char.isalpha() or char == '_':  # Start of an identifier
+            self._handle_identifier()
+        elif char == '"':  # Start of a string literal
             self._handle_string()
         elif char == '(':
-            self.tokens.append(Token(TokenType.LEFT_PAREN, char, self.line))
+            self._add_token(TokenType.LEFT_PAREN)
         elif char == ')':
-            self.tokens.append(Token(TokenType.RIGHT_PAREN, char, self.line))
+            self._add_token(TokenType.RIGHT_PAREN)
         elif char == '{':
-            self.tokens.append(Token(TokenType.LEFT_BRACE, char, self.line))
+            self._add_token(TokenType.LEFT_BRACE)
         elif char == '}':
-            self.tokens.append(Token(TokenType.RIGHT_BRACE, char, self.line))
+            self._add_token(TokenType.RIGHT_BRACE)
         elif char == ',':
-            self.tokens.append(Token(TokenType.COMMA, char, self.line))
+            self._add_token(TokenType.COMMA)
         elif char == ';':
-            self.tokens.append(Token(TokenType.SEMICOLON, char, self.line))
+            self._add_token(TokenType.SEMICOLON)
         elif char == '=':
             self._add_token(TokenType.EQUAL_EQUAL if self._match('=') else TokenType.EQUAL)
         elif char == '/':
@@ -56,8 +59,6 @@ class Scanner:
             self._add_token(TokenType.GREATER_EQUAL if self._match('=') else TokenType.GREATER)
         elif char.isdigit():  # Check if it's a number
             self._handle_number()
-        elif char.isalpha() or char == '_':  # Check if it's a valid identifier or keyword
-            self._handle_identifier()
         else:
             self._handle_lexical_error(f"Unexpected character: {char}")
 
