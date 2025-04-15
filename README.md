@@ -1,6 +1,14 @@
+Here's the updated `README.md` reflecting progress through:
+
+- Scanning: Identifiers, Reserved Words  
+- Parsing: Booleans, Nil, Number Literals, and String Literals  
+
+---
+
+```markdown
 # Interpreter - Python Implementation
 
-The aim is to build an interpreter from scratch by implementing each phase: scanning, parsing, resolving, interpreting, and more. This README documents the progress of the **Scanner (Lexer)** stage.
+The aim is to build an interpreter from scratch by implementing each phase: scanning, parsing, resolving, interpreting, and more. This README documents the progress of the **Scanner (Lexer)** and **Parser** stages.
 
 ---
 
@@ -79,11 +87,30 @@ We’ve implemented the following token scanning features so far:
 - Supports string scanning like `"Hello, world!"` and `"He said \"Hi\"!"`.
 - Detects unterminated strings and raises lexical errors.
 
+### 13. 🔡 Identifiers and Keywords
+- Recognizes variable names, function names, etc.
+- Distinguishes between identifiers and reserved keywords like `if`, `else`, `true`, `false`, `nil`, `for`, `while`, etc.
+
+### 14. 🔢 Number Literals
+- Scans both integer and floating-point numbers, e.g. `123`, `3.14`.
+
+---
+
+## 🧮 Parser Features Implemented
+
+The parser translates tokens into expressions in an Abstract Syntax Tree (AST).
+
+### ✅ Supported Expression Parsing:
+
+- **Booleans & Nil**: Parses `true`, `false`, and `nil` as literal expressions.
+- **Number Literals**: Parses numeric tokens into literal expression nodes.
+- **String Literals**: Parses quoted text into string literal expressions.
+
 ---
 
 ## 🔬 Testing
 
-The project uses Python’s built-in `unittest` framework. Tests are written to cover all scanning functionalities.
+The project uses Python’s built-in `unittest` framework. Tests are written to cover all scanning and parsing functionalities.
 
 To run the tests:
 
@@ -94,9 +121,9 @@ python -m unittest discover tests
 You should see an output similar to:
 
 ```
-.................
+....................
 ----------------------------------------------------------------------
-Ran 17 tests in 0.003s
+Ran 20 tests in 0.004s
 
 OK
 ```
@@ -105,10 +132,13 @@ OK
 
 ## 🚀 Upcoming Features
 
-- Scanning numbers and identifiers
-- Parsing tokens into an Abstract Syntax Tree (AST)
-- Implementing expression evaluation
-- Control flow and environment support
+- Full expression grammar support (grouping, unary, binary operations)
+- Parsing logical operators, comparison, equality
+- AST pretty-printing / visualization
+- Expression evaluation (Interpreter)
+- Variable declarations and environments
+- Control flow: `if`, `while`, `for`
+- Functions, classes, and closures
 - REPL and file execution support
 
 ---
@@ -128,9 +158,8 @@ Developed with ❤️ by Mohammed Abdul Rahman
 ## 📖 License
 
 This project is open-source and available under the [MIT License](LICENSE).
-
 ```
 
 ---
 
-Let me know if you'd like to include screenshots, syntax highlighting, or links to the test cases or code files. I can help add those too.
+Let me know if you want this split into multiple sections (e.g., `SCANNER.md`, `PARSER.md`), or if you'd like badges, TOC, or diagrams added.
