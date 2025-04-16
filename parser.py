@@ -16,7 +16,17 @@ class Parser:
             return None
 
     def expression(self):
-        return self.addition() # Addition and subtraction have the lowest precedence so far
+        return self.comparison() # Comparison operators have lower precedence than arithmetic
+
+    def comparison(self):
+        left = self.addition() # Comparison operates on terms (addition/subtraction)
+
+        while self._match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL):
+            operator = self._previous()
+            right = self.addition()
+            left = Binary(left, operator, right)
+
+        return left
 
     def addition(self):
         left = self.multiplication() # Addition and subtraction operate on terms (multiplication/division)
