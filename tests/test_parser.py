@@ -3,7 +3,7 @@
 import unittest
 from scanner import Scanner
 from parser import Parser
-from ast_1 import BooleanLiteral, NilLiteral, NumberLiteral, StringLiteral
+from ast_1 import BooleanLiteral, NilLiteral, NumberLiteral, StringLiteral, Grouping
 
 class ParserTest(unittest.TestCase):
     def test_parse_true(self):
@@ -85,6 +85,49 @@ class ParserTest(unittest.TestCase):
         expression = parser.parse()
         self.assertIsInstance(expression, StringLiteral)
         self.assertEqual(expression.value, "hello\nworld")
+        
+    def test_parse_grouping(self):
+        scanner = Scanner("(true)")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Grouping)
+        self.assertIsInstance(expression.expression, BooleanLiteral)
+        self.assertTrue(expression.expression.value)
+
+    def test_parse_nested_grouping(self):
+        scanner = Scanner("((nil))")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Grouping)
+        self.assertIsInstance(expression.expression, Grouping)
+        self.assertIsInstance(expression.expression.expression, NilLiteral)
+        self.assertIsNone(expression.expression.expression.value)
+
+    def test_parse_grouping_with_other_literal(self):
+        scanner = Scanner("(123)")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Grouping)
+        self.assertIsInstance(expression.expression, NumberLiteral)
+        self.assertEqual(expression.expression.value, 123)
+
+    def test_parse_unclosed_grouping(self):
+        scanner = Scanner("(true")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsNone(expression) # Expect parse to return None due to error
+
+    def test_parse_empty_grouping(self):
+        scanner = Scanner("()")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Grouping)
+        self.assertIsNone(expression.expression) # What should an empty group contain? For now, None.
 
 if __name__ == '__main__':
     unittest.main()

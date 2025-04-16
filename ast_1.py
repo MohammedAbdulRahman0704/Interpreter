@@ -41,6 +41,14 @@ class StringLiteral(Literal):
     def accept(self, visitor):
         return visitor.visit_string_literal_expr(self)
 
+# Represents an expression grouped in parentheses
+class Grouping(Expr):
+    def __init__(self, expression):
+        self.expression = expression
+
+    def accept(self, visitor):
+        return visitor.visit_grouping_expr(self)
+
 class Visitor(ABC):
     @abstractmethod
     def visit_literal_expr(self, expr: Literal):
@@ -56,6 +64,10 @@ class Visitor(ABC):
 
     @abstractmethod
     def visit_string_literal_expr(self, expr: StringLiteral):
+        pass
+
+    @abstractmethod
+    def visit_grouping_expr(self, expr: Grouping):
         pass
 
 # ... (other visit methods will be added later) ...

@@ -1,7 +1,7 @@
 # parser.py
 
 from interpreter_token import Token, TokenType
-from ast_1 import Expr, Literal, BooleanLiteral, NilLiteral, NumberLiteral, Visitor, StringLiteral
+from ast_1 import Expr, Literal, BooleanLiteral, NilLiteral, NumberLiteral, Visitor, StringLiteral, Grouping
 
 class Parser:
     def __init__(self, tokens):
@@ -16,7 +16,12 @@ class Parser:
             return None
 
     def expression(self):
-        return self.literal() # For now, the only expressions are literals
+        if self._match(TokenType.LEFT_PAREN):
+            expression = self.expression()
+            self._consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
+            return Grouping(expression)
+        else:
+            return self.literal()
 
     def literal(self):
         if self._match(TokenType.FALSE):
@@ -34,6 +39,12 @@ class Parser:
         # or report an error. For now, we'll return None and handle errors later
         # in a more robust way.
         return None
+    
+    def _consume(self, type, message):
+        if self._check(type):
+            return self._advance()
+
+        raise self._error(self._peek(), message)
 
     def _match(self, *types):
         for type in types:
