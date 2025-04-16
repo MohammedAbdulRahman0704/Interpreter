@@ -3,7 +3,7 @@
 import unittest
 from scanner import Scanner
 from parser import Parser
-from ast_1 import BooleanLiteral, NilLiteral, NumberLiteral, StringLiteral, Grouping, Unary
+from ast_1 import BooleanLiteral, NilLiteral, NumberLiteral, StringLiteral, Grouping, Unary, Binary
 from interpreter_token import TokenType
 
 class ParserTest(unittest.TestCase):
@@ -171,6 +171,60 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(expression.operator.type, TokenType.BANG)
         self.assertIsInstance(expression.right, Grouping)
         self.assertIsInstance(expression.right.expression, NilLiteral)
+    
+    def test_parse_addition(self):
+        scanner = Scanner("1 + 2")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Binary)
+        self.assertEqual(expression.operator.type, TokenType.PLUS)
+        self.assertIsInstance(expression.left, NumberLiteral)
+        self.assertEqual(expression.left.value, 1)
+        self.assertIsInstance(expression.right, NumberLiteral)
+        self.assertEqual(expression.right.value, 2)
+
+    def test_parse_subtraction(self):
+        scanner = Scanner("3 - 4")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Binary)
+        self.assertEqual(expression.operator.type, TokenType.MINUS)
+        self.assertIsInstance(expression.left, NumberLiteral)
+        self.assertEqual(expression.left.value, 3)
+        self.assertIsInstance(expression.right, NumberLiteral)
+        self.assertEqual(expression.right.value, 4)
+
+    def test_parse_addition_subtraction(self):
+        scanner = Scanner("1 + 2 - 3")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Binary)
+        self.assertEqual(expression.operator.type, TokenType.MINUS)
+        self.assertIsInstance(expression.right, NumberLiteral)
+        self.assertEqual(expression.right.value, 3)
+        self.assertIsInstance(expression.left, Binary)
+        self.assertEqual(expression.left.operator.type, TokenType.PLUS)
+        self.assertIsInstance(expression.left.left, NumberLiteral)
+        self.assertEqual(expression.left.left.value, 1)
+        self.assertIsInstance(expression.left.right, NumberLiteral)
+        self.assertEqual(expression.left.right.value, 2)
+
+    def test_parse_unary_before_addition(self):
+        scanner = Scanner("-1 + 2")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Binary)
+        self.assertEqual(expression.operator.type, TokenType.PLUS)
+        self.assertIsInstance(expression.right, NumberLiteral)
+        self.assertEqual(expression.right.value, 2)
+        self.assertIsInstance(expression.left, Unary)
+        self.assertEqual(expression.left.operator.type, TokenType.MINUS)
+        self.assertIsInstance(expression.left.right, NumberLiteral)
+        self.assertEqual(expression.left.right.value, 1)
 
 if __name__ == '__main__':
     unittest.main()

@@ -66,6 +66,8 @@ class Scanner:
                 self._add_token(TokenType.DIVIDE)  # Regular divide operator
         elif char == '-':
             self._add_token(TokenType.MINUS)
+        elif char == '+':
+            self._add_token(TokenType.PLUS)
         elif char in [' ', '\r', '\t']:
             # Ignore whitespace
             pass

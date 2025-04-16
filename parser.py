@@ -1,7 +1,7 @@
 # parser.py
 
 from interpreter_token import Token, TokenType
-from ast_1 import Expr, Literal, BooleanLiteral, NilLiteral, NumberLiteral, Visitor, StringLiteral, Grouping, Unary
+from ast_1 import Expr, Literal, BooleanLiteral, NilLiteral, NumberLiteral, Visitor, StringLiteral, Grouping, Unary, Binary
 
 class Parser:
     def __init__(self, tokens):
@@ -16,7 +16,17 @@ class Parser:
             return None
 
     def expression(self):
-        return self.unary() # Unary has higher precedence than primary for now
+        return self.addition() # Addition and subtraction have the lowest precedence so far
+
+    def addition(self):
+        left = self.unary() # Operands of + and - can be unary expressions
+
+        while self._match(TokenType.MINUS, TokenType.PLUS):
+            operator = self._previous()
+            right = self.unary() # Right operand can also be unary
+            left = Binary(left, operator, right)
+
+        return left
 
     def unary(self):
         if self._match(TokenType.BANG, TokenType.MINUS): # Logical NOT and Negation

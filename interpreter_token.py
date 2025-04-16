@@ -20,6 +20,7 @@ class TokenType(Enum):
     GREATER_EQUAL = auto()
     DIVIDE = auto()
     MINUS = auto()
+    PLUS = auto()
     IDENTIFIER = auto()
     NUMBER = auto()
     STRING = auto()

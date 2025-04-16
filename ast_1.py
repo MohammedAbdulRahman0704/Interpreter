@@ -58,6 +58,16 @@ class Unary(Expr):
     def accept(self, visitor):
         return visitor.visit_unary_expr(self)
 
+# Represents a binary operation (e.g., a + b, a - b)
+class Binary(Expr):
+    def __init__(self, left: Expr, operator: Token, right: Expr):
+        self.left = left
+        self.operator = operator
+        self.right = right
+
+    def accept(self, visitor):
+        return visitor.visit_binary_expr(self)
+
 class Visitor(ABC):
     @abstractmethod
     def visit_literal_expr(self, expr: Literal):
@@ -81,6 +91,10 @@ class Visitor(ABC):
 
     @abstractmethod
     def visit_unary_expr(self, expr: Unary):
+        pass
+
+    @abstractmethod
+    def visit_binary_expr(self, expr: Binary):
         pass
 
 # ... (other visit methods will be added later) ...
