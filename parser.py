@@ -16,10 +16,20 @@ class Parser:
             return None
 
     def expression(self):
-        return self.comparison() # Comparison operators have lower precedence than arithmetic
+        return self.equality() # Equality operators have the lowest precedence so far
+
+    def equality(self):
+        left = self.comparison()
+
+        while self._match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
+            operator = self._previous()
+            right = self.comparison()
+            left = Binary(left, operator, right)
+
+        return left
 
     def comparison(self):
-        left = self.addition() # Comparison operates on terms (addition/subtraction)
+        left = self.addition() # Comparison operates on terms from addition/subtraction
 
         while self._match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL):
             operator = self._previous()
@@ -29,7 +39,7 @@ class Parser:
         return left
 
     def addition(self):
-        left = self.multiplication() # Addition and subtraction operate on terms (multiplication/division)
+        left = self.multiplication()
 
         while self._match(TokenType.MINUS, TokenType.PLUS):
             operator = self._previous()
@@ -39,7 +49,7 @@ class Parser:
         return left
 
     def multiplication(self):
-        left = self.unary() # Multiplication and division operate on unary expressions
+        left = self.unary()
 
         while self._match(TokenType.STAR, TokenType.DIVIDE):
             operator = self._previous()
