@@ -10,7 +10,7 @@ class Parser:
 
     def parse(self):
         try:
-            return self.expression() # For now, we're just parsing a single expression
+            return self.expression()
         except ParseError as error:
             print(error)
             return None
@@ -19,19 +19,29 @@ class Parser:
         return self.addition() # Addition and subtraction have the lowest precedence so far
 
     def addition(self):
-        left = self.unary() # Operands of + and - can be unary expressions
+        left = self.multiplication() # Addition and subtraction operate on terms (multiplication/division)
 
         while self._match(TokenType.MINUS, TokenType.PLUS):
             operator = self._previous()
-            right = self.unary() # Right operand can also be unary
+            right = self.multiplication()
+            left = Binary(left, operator, right)
+
+        return left
+
+    def multiplication(self):
+        left = self.unary() # Multiplication and division operate on unary expressions
+
+        while self._match(TokenType.STAR, TokenType.DIVIDE):
+            operator = self._previous()
+            right = self.unary()
             left = Binary(left, operator, right)
 
         return left
 
     def unary(self):
-        if self._match(TokenType.BANG, TokenType.MINUS): # Logical NOT and Negation
+        if self._match(TokenType.BANG, TokenType.MINUS):
             operator = self._previous()
-            right = self.unary() # Unary can be nested (e.g., --5)
+            right = self.unary()
             return Unary(operator, right)
 
         return self.primary()
@@ -44,9 +54,9 @@ class Parser:
         if self._match(TokenType.NIL):
             return NilLiteral()
         if self._match(TokenType.NUMBER):
-            return NumberLiteral(self._previous().literal) # Get the actual number value
+            return NumberLiteral(self._previous().literal)
         if self._match(TokenType.STRING):
-            return StringLiteral(self._previous().literal) # Get the actual string value
+            return StringLiteral(self._previous().literal)
         if self._match(TokenType.LEFT_PAREN):
             expression = self.expression()
             self._consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
@@ -57,7 +67,6 @@ class Parser:
     def _consume(self, type, message):
         if self._check(type):
             return self._advance()
-
         raise self._error(self._peek(), message)
 
     def _match(self, *types):

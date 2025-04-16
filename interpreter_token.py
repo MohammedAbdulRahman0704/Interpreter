@@ -21,6 +21,7 @@ class TokenType(Enum):
     DIVIDE = auto()
     MINUS = auto()
     PLUS = auto()
+    STAR = auto()
     IDENTIFIER = auto()
     NUMBER = auto()
     STRING = auto()

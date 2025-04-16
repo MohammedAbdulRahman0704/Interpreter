@@ -39,9 +39,11 @@ class Scanner:
     def _scan_token(self):
         char = self._advance()
 
-        if char.isalpha() or char == '_':  # Start of an identifier or keyword
+        if char.isalpha() or char == '_':
             self._handle_identifier_or_keyword()
-        elif char == '"':  # Start of a string literal
+        elif char.isdigit():
+            self._handle_number()
+        elif char == '"':
             self._handle_string()
         elif char == '(':
             self._add_token(TokenType.LEFT_PAREN)
@@ -58,18 +60,19 @@ class Scanner:
         elif char == '=':
             self._add_token(TokenType.EQUAL_EQUAL if self._match('=') else TokenType.EQUAL)
         elif char == '/':
-            if self._match('/'):  # Start of a single-line comment
+            if self._match('/'):
                 self._skip_comment()
-            elif self._match('*'):  # Start of a multi-line comment
+            elif self._match('*'):
                 self._skip_block_comment()
             else:
-                self._add_token(TokenType.DIVIDE)  # Regular divide operator
+                self._add_token(TokenType.DIVIDE)
         elif char == '-':
             self._add_token(TokenType.MINUS)
         elif char == '+':
             self._add_token(TokenType.PLUS)
+        elif char == '*':
+            self._add_token(TokenType.STAR)
         elif char in [' ', '\r', '\t']:
-            # Ignore whitespace
             pass
         elif char == '\n':
             self.line += 1
@@ -79,9 +82,7 @@ class Scanner:
             self._add_token(TokenType.LESS_EQUAL if self._match('=') else TokenType.LESS)
         elif char == '>':
             self._add_token(TokenType.GREATER_EQUAL if self._match('=') else TokenType.GREATER)
-        elif char.isdigit():  # Check if it's a number
-            self._handle_number()
-        elif char == '.':  # Handle numbers starting with a decimal
+        elif char == '.':
             if self._peek().isdigit():
                 self._handle_number()
             else:
