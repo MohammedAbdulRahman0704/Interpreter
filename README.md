@@ -1,11 +1,3 @@
-Here's the updated `README.md` reflecting progress through:
-
-- Scanning: Identifiers, Reserved Words  
-- Parsing: Booleans, Nil, Number Literals, and String Literals  
-
----
-
-```markdown
 # Interpreter - Python Implementation
 
 The aim is to build an interpreter from scratch by implementing each phase: scanning, parsing, resolving, interpreting, and more. This README documents the progress of the **Scanner (Lexer)** and **Parser** stages.
@@ -105,6 +97,12 @@ The parser translates tokens into expressions in an Abstract Syntax Tree (AST).
 - **Booleans & Nil**: Parses `true`, `false`, and `nil` as literal expressions.
 - **Number Literals**: Parses numeric tokens into literal expression nodes.
 - **String Literals**: Parses quoted text into string literal expressions.
+- **Grouping (Parentheses)**: Supports expressions like `(1 + 2)`.
+- **Unary Operators**: Parses unary `!` and `-` expressions.
+- **Binary Arithmetic (Part 1)**: Parses `*` and `/` for multiplication and division.
+- **Binary Arithmetic (Part 2)**: Parses `+` and `-` for addition and subtraction.
+- **Comparison Operators**: Parses `<`, `<=`, `>`, `>=`.
+- **Equality Operators**: Parses `==`, `!=`.
 
 ---
 
@@ -121,9 +119,9 @@ python -m unittest discover tests
 You should see an output similar to:
 
 ```
-....................
+.......................
 ----------------------------------------------------------------------
-Ran 20 tests in 0.004s
+Ran 40 tests in 0.006s
 
 OK
 ```
@@ -132,8 +130,7 @@ OK
 
 ## 🚀 Upcoming Features
 
-- Full expression grammar support (grouping, unary, binary operations)
-- Parsing logical operators, comparison, equality
+- Parsing logical operators (`and`, `or`)
 - AST pretty-printing / visualization
 - Expression evaluation (Interpreter)
 - Variable declarations and environments
@@ -159,7 +156,3 @@ Developed with ❤️ by Mohammed Abdul Rahman
 
 This project is open-source and available under the [MIT License](LICENSE).
 ```
-
----
-
-Let me know if you want this split into multiple sections (e.g., `SCANNER.md`, `PARSER.md`), or if you'd like badges, TOC, or diagrams added.
