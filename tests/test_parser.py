@@ -3,7 +3,8 @@
 import unittest
 from scanner import Scanner
 from parser import Parser
-from ast_1 import BooleanLiteral, NilLiteral, NumberLiteral, StringLiteral, Grouping
+from ast_1 import BooleanLiteral, NilLiteral, NumberLiteral, StringLiteral, Grouping, Unary
+from interpreter_token import TokenType
 
 class ParserTest(unittest.TestCase):
     def test_parse_true(self):
@@ -128,6 +129,48 @@ class ParserTest(unittest.TestCase):
         expression = parser.parse()
         self.assertIsInstance(expression, Grouping)
         self.assertIsNone(expression.expression) # What should an empty group contain? For now, None.
+    
+    def test_parse_unary_not_true(self):
+        scanner = Scanner("!true")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Unary)
+        self.assertEqual(expression.operator.type, TokenType.BANG)
+        self.assertIsInstance(expression.right, BooleanLiteral)
+        self.assertTrue(expression.right.value)
+
+    def test_parse_unary_negate_number(self):
+        scanner = Scanner("-123")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Unary)
+        self.assertEqual(expression.operator.type, TokenType.MINUS) # Assuming '-' is scanned as MINUS
+        self.assertIsInstance(expression.right, NumberLiteral)
+        self.assertEqual(expression.right.value, 123)
+
+    def test_parse_nested_unary(self):
+        scanner = Scanner("!!false")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Unary)
+        self.assertEqual(expression.operator.type, TokenType.BANG)
+        self.assertIsInstance(expression.right, Unary)
+        self.assertEqual(expression.right.operator.type, TokenType.BANG)
+        self.assertIsInstance(expression.right.right, BooleanLiteral)
+        self.assertFalse(expression.right.right.value)
+
+    def test_parse_unary_with_grouping(self):
+        scanner = Scanner("! (nil)")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        self.assertIsInstance(expression, Unary)
+        self.assertEqual(expression.operator.type, TokenType.BANG)
+        self.assertIsInstance(expression.right, Grouping)
+        self.assertIsInstance(expression.right.expression, NilLiteral)
 
 if __name__ == '__main__':
     unittest.main()

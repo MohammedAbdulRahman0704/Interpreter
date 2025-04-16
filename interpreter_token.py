@@ -19,6 +19,7 @@ class TokenType(Enum):
     GREATER = auto()
     GREATER_EQUAL = auto()
     DIVIDE = auto()
+    MINUS = auto()
     IDENTIFIER = auto()
     NUMBER = auto()
     STRING = auto()

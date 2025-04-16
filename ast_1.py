@@ -49,6 +49,15 @@ class Grouping(Expr):
     def accept(self, visitor):
         return visitor.visit_grouping_expr(self)
 
+# Represents a unary operation (e.g., -value, !condition)
+class Unary(Expr):
+    def __init__(self, operator: Token, right: Expr):
+        self.operator = operator
+        self.right = right
+
+    def accept(self, visitor):
+        return visitor.visit_unary_expr(self)
+
 class Visitor(ABC):
     @abstractmethod
     def visit_literal_expr(self, expr: Literal):
@@ -68,6 +77,10 @@ class Visitor(ABC):
 
     @abstractmethod
     def visit_grouping_expr(self, expr: Grouping):
+        pass
+
+    @abstractmethod
+    def visit_unary_expr(self, expr: Unary):
         pass
 
 # ... (other visit methods will be added later) ...

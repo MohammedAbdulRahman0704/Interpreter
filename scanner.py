@@ -64,6 +64,8 @@ class Scanner:
                 self._skip_block_comment()
             else:
                 self._add_token(TokenType.DIVIDE)  # Regular divide operator
+        elif char == '-':
+            self._add_token(TokenType.MINUS)
         elif char in [' ', '\r', '\t']:
             # Ignore whitespace
             pass
