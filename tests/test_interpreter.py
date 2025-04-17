@@ -102,3 +102,13 @@ class InterpreterTest(unittest.TestCase):
         result = interpreter.interpret(expression)
         self.assertEqual(result, "world")
         self.assertIsInstance(result, str)
+    
+    def test_evaluate_grouping_with_operation(self):
+        scanner = Scanner("(1 + 2)")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, 3)
+        self.assertIsInstance(result, int)

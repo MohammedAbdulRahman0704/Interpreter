@@ -1,6 +1,7 @@
 # interpreter.py
 
 from ast_1 import Visitor, BooleanLiteral, NilLiteral, NumberLiteral, StringLiteral, Grouping, Unary, Binary
+from interpreter_token import TokenType
 
 class Interpreter(Visitor):
     def interpret(self, expression):
@@ -35,6 +36,15 @@ class Interpreter(Visitor):
         # Implement unary evaluation later
         return None
 
-    def visit_binary_expr(self, binary):
-        # Implement binary evaluation later
+    def visit_binary_expr(self, binary: Binary):
+        left = self.visit(binary.left)
+        right = self.visit(binary.right)
+        operator = binary.operator.type
+
+        if operator == TokenType.PLUS:
+            if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+                return left + right
+            # Add error handling for invalid operand types later
+            raise RuntimeError(f"Operands must be numbers for '+' operator. Got '{type(left)}' and '{type(right)}'.")
+        # Add cases for other binary operators later (MINUS, STAR, etc.)
         return None
