@@ -2,7 +2,7 @@
 
 import unittest
 from scanner import Scanner
-from parser import Parser
+from parser import Parser, ParseError
 from ast_1 import BooleanLiteral, NilLiteral, NumberLiteral, StringLiteral, Grouping, Unary, Binary
 from interpreter_token import TokenType
 
@@ -470,6 +470,51 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(expression.right.left.value, 1)
         self.assertIsInstance(expression.right.right, NumberLiteral)
         self.assertEqual(expression.right.right.value, 2)
+    
+    def test_parse_empty_grouping(self): # Moved to ParserErrorTest
+        pass
+
+    def test_parse_unclosed_grouping(self): # Moved to ParserErrorTest
+        pass
+
+class ParserErrorTest(unittest.TestCase):
+
+    def assertParseError(self, text, expected_message_part=None):
+        scanner = Scanner(text)
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        with self.assertRaises(ParseError) as context:
+            parser.parse()
+        if expected_message_part:
+            self.assertIn(expected_message_part, str(context.exception))
+
+    def test_unclosed_parentheses(self):
+        self.assertParseError("(1 + 2", "Expect ')' after expression.")
+
+    def test_missing_right_operand(self):
+        self.assertParseError("1 +", "Expect expression after operator.")
+
+    def test_unexpected_token(self):
+        scanner = Scanner("1 $ 2")
+        with self.assertRaises(Exception) as context: # Expect a general Exception from the scanner
+            scanner.scan_tokens()
+        self.assertIn("Lexical Error", str(context.exception))
+        self.assertIn("Unexpected character: $", str(context.exception))
+
+    def test_expression_followed_by_junk(self):
+        self.assertParseError("1 + 2 )", "Expect end of input after expression.")
+
+    def test_empty_expression_in_parentheses(self):
+        self.assertParseError("()", "Expect expression.")
+
+    def test_missing_operator(self):
+        self.assertParseError("1 2", "Expect operator after expression.")
+
+    def test_parse_empty_grouping(self): # Moved from ParserTest
+        self.assertParseError("()", "Expect expression.")
+
+    def test_parse_unclosed_grouping(self): # Moved from ParserTest
+        self.assertParseError("(true", "Expect ')' after expression.")
 
 if __name__ == '__main__':
     unittest.main()

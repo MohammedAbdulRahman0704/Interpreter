@@ -10,52 +10,59 @@ class Parser:
 
     def parse(self):
         try:
-            return self.expression()
+            expression = self.expression()
+            if not self._is_at_end():
+                raise self._error(self._peek(), "Expect end of input after expression.")
+            return expression
         except ParseError as error:
             print(error)
-            return None
+            self._synchronize()
+            raise error
 
     def expression(self):
-        return self.equality() # Equality operators have the lowest precedence so far
+        left = self.equality()
+        if not self._is_at_end() and self._peek().type not in [TokenType.EOF, TokenType.RIGHT_PAREN]:
+            # If there's something left after a complete expression
+            # and it's not a valid follower, assume a missing operator.
+            # We might need to expand this list of valid followers as the grammar grows.
+            raise self._error(self._peek(), "Expect operator after expression.")
+        return left
 
     def equality(self):
         left = self.comparison()
-
         while self._match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
             operator = self._previous()
             right = self.comparison()
             left = Binary(left, operator, right)
-
+        if not self._is_at_end() and self._peek().type not in [TokenType.EOF, TokenType.RIGHT_PAREN]:
+            # Add more valid following tokens if needed for more complex grammar
+            pass # For now, let lower precedence rules handle this
         return left
 
     def comparison(self):
-        left = self.addition() # Comparison operates on terms from addition/subtraction
-
+        left = self.addition()
         while self._match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL):
             operator = self._previous()
             right = self.addition()
             left = Binary(left, operator, right)
-
         return left
 
     def addition(self):
         left = self.multiplication()
-
         while self._match(TokenType.MINUS, TokenType.PLUS):
             operator = self._previous()
+            if self._is_at_end():
+                raise self._error(self._previous(), "Expect expression after operator.")
             right = self.multiplication()
             left = Binary(left, operator, right)
-
         return left
 
     def multiplication(self):
         left = self.unary()
-
         while self._match(TokenType.STAR, TokenType.DIVIDE):
             operator = self._previous()
             right = self.unary()
             left = Binary(left, operator, right)
-
         return left
 
     def unary(self):
@@ -63,7 +70,6 @@ class Parser:
             operator = self._previous()
             right = self.unary()
             return Unary(operator, right)
-
         return self.primary()
 
     def primary(self):
@@ -82,7 +88,7 @@ class Parser:
             self._consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
             return Grouping(expression)
 
-        return None # For now, if no primary expression is found
+        raise self._error(self._peek(), "Expect expression.") # Error if no primary is found
 
     def _consume(self, type, message):
         if self._check(type):
@@ -109,6 +115,11 @@ class Parser:
     def _peek(self):
         return self.tokens[self.current]
 
+    def _peek_previous(self):
+        if self.current > 0:
+            return self.tokens[self.current - 1]
+        return None
+
     def _previous(self):
         return self.tokens[self.current - 1]
 
@@ -116,15 +127,13 @@ class Parser:
         return self._peek().type == TokenType.EOF
 
     def _error(self, token, message):
-        return ParseError(token, message)
+        return ParseError(token, message, token.line)
 
     def _synchronize(self):
         self._advance()
-
         while not self._is_at_end():
             if self._previous().type == TokenType.SEMICOLON:
                 return
-
             if self._peek().type in [
                 TokenType.CLASS,
                 TokenType.FUN,
@@ -136,13 +145,13 @@ class Parser:
                 TokenType.RETURN
             ]:
                 return
-
             self._advance()
 
 class ParseError(Exception):
-    def __init__(self, token, message):
+    def __init__(self, token, message, line):
         self.token = token
         self.message = message
+        self.line = line
 
     def __str__(self):
-        return f"ParseError at {self.token}: {self.message}"
+        return f"ParseError at line {self.line}, {self.token}: {self.message}"
