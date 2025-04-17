@@ -5,11 +5,7 @@ from interpreter_token import TokenType
 
 class Interpreter(Visitor):
     def interpret(self, expression):
-        try:
-            return self.visit(expression)
-        except RuntimeError as error:
-            print(error)
-            return None
+        return self.visit(expression)
 
     def visit(self, expr):
         return expr.accept(self)
@@ -36,11 +32,11 @@ class Interpreter(Visitor):
         right = self.visit(unary.right)
         operator_type = unary.operator.type
 
-        if operator_type == TokenType.MINUS:
+        if operator_type is TokenType.MINUS:
             if isinstance(right, (int, float)):
                 return -right
             raise RuntimeError("Operand must be a number for '-' operator.")
-        elif operator_type == TokenType.BANG:
+        elif operator_type is TokenType.BANG:
             return not self._is_truthy(right)
         return None
 
@@ -49,14 +45,24 @@ class Interpreter(Visitor):
         right = self.visit(binary.right)
         operator = binary.operator.type
 
-        if operator == TokenType.PLUS:
+        if operator is TokenType.PLUS:
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 return left + right
             raise RuntimeError(f"Operands must be numbers for '+' operator. Got '{type(left)}' and '{type(right)}'.")
-        elif operator == TokenType.MINUS:
+        elif operator is TokenType.MINUS:
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 return left - right
             raise RuntimeError(f"Operands must be numbers for '-' operator. Got '{type(left)}' and '{type(right)}'.")
+        elif operator is TokenType.STAR:
+            if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+                return left * right
+            raise RuntimeError(f"Operands must be numbers for '*' operator. Got '{type(left)}' and '{type(right)}'.")
+        elif operator is TokenType.DIVIDE:
+            if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+                if right == 0:
+                    raise RuntimeError("Division by zero.")
+                return left / right
+            raise RuntimeError(f"Operands must be numbers for '/' operator. Got '{type(left)}' and '{type(right)}'.")
         return None
 
     def _is_truthy(self, value):
