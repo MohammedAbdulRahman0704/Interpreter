@@ -202,3 +202,73 @@ class InterpreterTest(unittest.TestCase):
         result = interpreter.interpret(expression)
         self.assertEqual(result, True)
         self.assertIsInstance(result, bool)
+    
+    def test_evaluate_binary_addition_integers(self):
+        scanner = Scanner("1 + 2")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, 3)
+        self.assertIsInstance(result, int)
+
+    def test_evaluate_binary_addition_floats(self):
+        scanner = Scanner("3.14 + 2.0")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertAlmostEqual(result, 5.14)
+        self.assertIsInstance(result, float)
+
+    def test_evaluate_binary_subtraction_integers(self):
+        scanner = Scanner("5 - 3")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, 2)
+        self.assertIsInstance(result, int)
+
+    def test_evaluate_binary_subtraction_floats(self):
+        scanner = Scanner("7.5 - 2.5")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, 5.0)
+        self.assertIsInstance(result, float)
+
+    def test_evaluate_binary_addition_with_grouping(self):
+        scanner = Scanner("(1 + 2) + 3")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, 6)
+        self.assertIsInstance(result, int)
+
+    def test_evaluate_binary_subtraction_with_grouping(self):
+        scanner = Scanner("5 - (3 - 1)")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, 3)
+        self.assertIsInstance(result, int)
+
+    def test_evaluate_mixed_addition_subtraction(self):
+        scanner = Scanner("1 + 2 - 3")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, 0)
+        self.assertIsInstance(result, int)

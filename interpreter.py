@@ -42,7 +42,6 @@ class Interpreter(Visitor):
             raise RuntimeError("Operand must be a number for '-' operator.")
         elif operator_type == TokenType.BANG:
             return not self._is_truthy(right)
-        # Add cases for other unary operators if we have them
         return None
 
     def visit_binary_expr(self, binary: Binary):
@@ -54,7 +53,10 @@ class Interpreter(Visitor):
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 return left + right
             raise RuntimeError(f"Operands must be numbers for '+' operator. Got '{type(left)}' and '{type(right)}'.")
-        # Add cases for other binary operators later (MINUS, STAR, etc.)
+        elif operator == TokenType.MINUS:
+            if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+                return left - right
+            raise RuntimeError(f"Operands must be numbers for '-' operator. Got '{type(left)}' and '{type(right)}'.")
         return None
 
     def _is_truthy(self, value):
