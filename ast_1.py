@@ -97,4 +97,35 @@ class Visitor(ABC):
     def visit_binary_expr(self, expr: Binary):
         pass
 
-# ... (other visit methods will be added later) ...
+class Interpreter(Visitor):
+    def interpret(self, expression):
+        try:
+            return self.visit(expression)
+        except RuntimeError as error:
+            print(error)
+            return None
+
+    def visit_boolean_literal_expr(self, literal: BooleanLiteral):
+        return literal.value
+
+    def visit_nil_literal_expr(self, literal: NilLiteral):
+        return literal.value
+
+    def visit_literal_expr(self, literal):
+        # We might handle other basic literals here if needed in the future
+        pass
+
+    def visit_number_literal_expr(self, literal):
+        pass
+
+    def visit_string_literal_expr(self, literal):
+        pass
+
+    def visit_grouping_expr(self, grouping):
+        return self.visit(grouping.expression)
+
+    def visit_unary_expr(self, unary):
+        pass
+
+    def visit_binary_expr(self, binary):
+        pass
