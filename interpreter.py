@@ -32,8 +32,17 @@ class Interpreter(Visitor):
     def visit_grouping_expr(self, grouping):
         return self.visit(grouping.expression)
 
-    def visit_unary_expr(self, unary):
-        # Implement unary evaluation later
+    def visit_unary_expr(self, unary: Unary):
+        right = self.visit(unary.right)
+        operator_type = unary.operator.type
+
+        if operator_type == TokenType.MINUS:
+            if isinstance(right, (int, float)):
+                return -right
+            raise RuntimeError("Operand must be a number for '-' operator.")
+        elif operator_type == TokenType.BANG:
+            return not self._is_truthy(right)
+        # Add cases for other unary operators if we have them
         return None
 
     def visit_binary_expr(self, binary: Binary):
@@ -44,7 +53,13 @@ class Interpreter(Visitor):
         if operator == TokenType.PLUS:
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 return left + right
-            # Add error handling for invalid operand types later
             raise RuntimeError(f"Operands must be numbers for '+' operator. Got '{type(left)}' and '{type(right)}'.")
         # Add cases for other binary operators later (MINUS, STAR, etc.)
         return None
+
+    def _is_truthy(self, value):
+        if value is None:
+            return False
+        if isinstance(value, bool):
+            return value
+        return True

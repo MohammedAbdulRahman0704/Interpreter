@@ -112,3 +112,93 @@ class InterpreterTest(unittest.TestCase):
         result = interpreter.interpret(expression)
         self.assertEqual(result, 3)
         self.assertIsInstance(result, int)
+    
+    def test_evaluate_unary_negate_number(self):
+        scanner = Scanner("-5")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, -5)
+        self.assertIsInstance(result, int)
+
+    def test_evaluate_unary_negate_float(self):
+        scanner = Scanner("-3.14")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, -3.14)
+        self.assertIsInstance(result, float)
+
+    def test_evaluate_unary_not_true(self):
+        scanner = Scanner("!true")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, False)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_unary_not_false(self):
+        scanner = Scanner("!false")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_unary_not_nil(self):
+        scanner = Scanner("!nil")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_unary_not_number(self):
+        scanner = Scanner("!123")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, False)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_unary_not_string(self):
+        scanner = Scanner('!"hello"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, False)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_nested_unary(self):
+        scanner = Scanner("!!true")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_unary_with_grouping(self):
+        scanner = Scanner("! (false)")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
