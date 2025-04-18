@@ -48,7 +48,9 @@ class Interpreter(Visitor):
         if operator is TokenType.PLUS:
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 return left + right
-            raise RuntimeError(f"Operands must be numbers for '+' operator. Got '{type(left)}' and '{type(right)}'.")
+            elif isinstance(left, str) and isinstance(right, str):
+                return left + right
+            raise RuntimeError(f"Operands must be either both numbers or both strings for '+' operator. Got '{type(left)}' and '{type(right)}'.")
         elif operator is TokenType.MINUS:
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 return left - right
@@ -57,7 +59,7 @@ class Interpreter(Visitor):
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 return left * right
             raise RuntimeError(f"Operands must be numbers for '*' operator. Got '{type(left)}' and '{type(right)}'.")
-        elif operator is TokenType.DIVIDE:
+        elif operator is TokenType.DIVIDE:  # Changed from TokenType.SLASH to TokenType.DIVIDE
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 if right == 0:
                     raise RuntimeError("Division by zero.")

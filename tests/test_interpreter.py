@@ -342,3 +342,43 @@ class InterpreterTest(unittest.TestCase):
         result = interpreter.interpret(expression)
         self.assertEqual(result, 9)
         self.assertIsInstance(result, int)
+    
+    def test_evaluate_string_concatenation(self):
+        scanner = Scanner('"hello" + " world"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, "hello world")
+        self.assertIsInstance(result, str)
+
+    def test_evaluate_string_concatenation_with_grouping(self):
+        scanner = Scanner('("part1" + "part") + "2"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, "part1part2")
+        self.assertIsInstance(result, str)
+
+    def test_evaluate_string_concatenation_mixed_types(self):
+        scanner = Scanner('"hello" + 123')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        with self.assertRaises(RuntimeError) as context:
+            interpreter.interpret(expression)
+        self.assertEqual(str(context.exception), "Operands must be either both numbers or both strings for '+' operator. Got '<class 'str'>' and '<class 'int'>'.")
+
+    def test_evaluate_number_addition_mixed_types(self):
+        scanner = Scanner('123 + "hello"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        with self.assertRaises(RuntimeError) as context:
+            interpreter.interpret(expression)
+        self.assertEqual(str(context.exception), "Operands must be either both numbers or both strings for '+' operator. Got '<class 'int'>' and '<class 'str'>'.")
