@@ -1,4 +1,3 @@
-```markdown
 # Interpreter - Python Implementation
 
 The aim is to build an interpreter from scratch by implementing each phase: scanning, parsing, resolving, interpreting, and more. This README documents the progress of the **Scanner (Lexer)**, **Parser**, and **Evaluator** stages.
@@ -119,6 +118,9 @@ The interpreter evaluates expressions by traversing the AST.
 - **Arithmetic Operators**:
   - Multiplication and Division: `*`, `/`
   - Addition and Subtraction: `+`, `-`
+  - ✅ **String Concatenation**: Supports `"Hello, " + "world!"`.
+- **Equality Operators**:
+  - Supports `==` and `!=` with proper type comparison and `nil` handling.
 
 ---
 
