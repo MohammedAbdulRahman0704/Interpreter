@@ -59,12 +59,32 @@ class Interpreter(Visitor):
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 return left * right
             raise RuntimeError(f"Operands must be numbers for '*' operator. Got '{type(left)}' and '{type(right)}'.")
-        elif operator is TokenType.DIVIDE:  # Changed from TokenType.SLASH to TokenType.DIVIDE
+        elif operator is TokenType.DIVIDE:
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 if right == 0:
                     raise RuntimeError("Division by zero.")
                 return left / right
             raise RuntimeError(f"Operands must be numbers for '/' operator. Got '{type(left)}' and '{type(right)}'.")
+        elif operator is TokenType.GREATER:
+            if not (isinstance(left, (int, float)) and isinstance(right, (int, float))):
+                raise RuntimeError(f"Operands must be numbers for '>' operator. Got '{type(left)}' and '{type(right)}'.")
+            return left > right
+        elif operator is TokenType.GREATER_EQUAL:
+            if not (isinstance(left, (int, float)) and isinstance(right, (int, float))):
+                raise RuntimeError(f"Operands must be numbers for '>=' operator. Got '{type(left)}' and '{type(right)}'.")
+            return left >= right
+        elif operator is TokenType.LESS:
+            if not (isinstance(left, (int, float)) and isinstance(right, (int, float))):
+                raise RuntimeError(f"Operands must be numbers for '<' operator. Got '{type(left)}' and '{type(right)}'.")
+            return left < right
+        elif operator is TokenType.LESS_EQUAL:
+            if not (isinstance(left, (int, float)) and isinstance(right, (int, float))):
+                raise RuntimeError(f"Operands must be numbers for '<=' operator. Got '{type(left)}' and '{type(right)}'.")
+            return left <= right
+        elif operator is TokenType.EQUAL_EQUAL:
+            return self._is_equal(left, right)
+        elif operator is TokenType.BANG_EQUAL:
+            return not self._is_equal(left, right)
         return None
 
     def _is_truthy(self, value):
@@ -73,3 +93,10 @@ class Interpreter(Visitor):
         if isinstance(value, bool):
             return value
         return True
+
+    def _is_equal(self, a, b):
+        if a is None and b is None:
+            return True
+        if a is None:
+            return False
+        return a == b

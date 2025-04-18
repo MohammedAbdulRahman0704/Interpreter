@@ -382,3 +382,163 @@ class InterpreterTest(unittest.TestCase):
         with self.assertRaises(RuntimeError) as context:
             interpreter.interpret(expression)
         self.assertEqual(str(context.exception), "Operands must be either both numbers or both strings for '+' operator. Got '<class 'int'>' and '<class 'str'>'.")
+    
+    def test_evaluate_equality_true(self):
+        scanner = Scanner("true == true")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_equality_false(self):
+        scanner = Scanner("false == false")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_inequality_true(self):
+        scanner = Scanner("true != false")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_inequality_false(self):
+        scanner = Scanner("false != false")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, False)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_equality_numbers(self):
+        scanner = Scanner("5 == 5")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_inequality_numbers(self):
+        scanner = Scanner("5 != 6")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_equality_strings(self):
+        scanner = Scanner('"hello" == "hello"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_inequality_strings(self):
+        scanner = Scanner('"hello" != "world"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_equality_nil(self):
+        scanner = Scanner("nil == nil")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_inequality_nil(self):
+        scanner = Scanner("nil != 5")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_equality_mixed_types_false(self):
+        scanner = Scanner("5 == true")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, False)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_inequality_mixed_types_true(self):
+        scanner = Scanner('"hello" != true')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_equality_nil_mixed_types_false(self):
+        scanner = Scanner("nil == false")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, False)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_inequality_nil_mixed_types_true(self):
+        scanner = Scanner("nil != 0")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_equality_grouping(self):
+        scanner = Scanner("(5 == 5) == true")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
+
+    def test_evaluate_inequality_grouping(self):
+        scanner = Scanner("(5 != 5) != true")
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, True)
+        self.assertIsInstance(result, bool)
