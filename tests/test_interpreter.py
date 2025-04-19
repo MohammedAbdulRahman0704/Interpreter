@@ -542,3 +542,93 @@ class InterpreterTest(unittest.TestCase):
         result = interpreter.interpret(expression)
         self.assertEqual(result, True)
         self.assertIsInstance(result, bool)
+    
+    def test_evaluate_string_concatenation(self):
+        scanner = Scanner('"hello" + " world"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, "hello world")
+        self.assertIsInstance(result, str)
+
+    def test_evaluate_string_concatenation_empty_strings(self):
+        scanner = Scanner('"" + ""')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, "")
+        self.assertIsInstance(result, str)
+
+    def test_evaluate_string_concatenation_one_empty(self):
+        scanner = Scanner('"hello" + ""')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        result = interpreter.interpret(expression)
+        self.assertEqual(result, "hello")
+        self.assertIsInstance(result, str)
+
+    def test_evaluate_addition_string_number(self):
+        scanner = Scanner('"hello" + 5')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        with self.assertRaises(RuntimeError) as context:
+            interpreter.interpret(expression)
+        self.assertEqual(str(context.exception), "Operands must be either both numbers or both strings for '+' operator. Got '<class 'str'>' and '<class 'int'>'.")
+
+    def test_evaluate_addition_number_string(self):
+        scanner = Scanner('5 + "hello"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        with self.assertRaises(RuntimeError) as context:
+            interpreter.interpret(expression)
+        self.assertEqual(str(context.exception), "Operands must be either both numbers or both strings for '+' operator. Got '<class 'int'>' and '<class 'str'>'.")
+
+    def test_evaluate_addition_string_boolean(self):
+        scanner = Scanner('"hello" + true')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        with self.assertRaises(RuntimeError) as context:
+            interpreter.interpret(expression)
+        self.assertEqual(str(context.exception), "Operands must be either both numbers or both strings for '+' operator. Got '<class 'str'>' and '<class 'bool'>'.")
+
+    def test_evaluate_addition_boolean_string(self):
+        scanner = Scanner('false + "world"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        with self.assertRaises(RuntimeError) as context:
+            interpreter.interpret(expression)
+        self.assertEqual(str(context.exception), "Operands must be either both numbers or both strings for '+' operator. Got '<class 'bool'>' and '<class 'str'>'.")
+
+    def test_evaluate_addition_string_nil(self):
+        scanner = Scanner('"hello" + nil')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        with self.assertRaises(RuntimeError) as context:
+            interpreter.interpret(expression)
+        self.assertEqual(str(context.exception), "Operands must be either both numbers or both strings for '+' operator. Got '<class 'str'>' and '<class 'NoneType'>'.")
+
+    def test_evaluate_addition_nil_string(self):
+        scanner = Scanner('nil + "world"')
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
+        interpreter = Interpreter()
+        with self.assertRaises(RuntimeError) as context:
+            interpreter.interpret(expression)
+        self.assertEqual(str(context.exception), "Operands must be either both numbers or both strings for '+' operator. Got '<class 'NoneType'>' and '<class 'str'>'.")
