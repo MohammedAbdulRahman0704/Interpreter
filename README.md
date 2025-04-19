@@ -44,28 +44,28 @@ We’ve implemented the following token scanning features so far:
 - Gracefully processes and returns no tokens.
 
 ### 2. 🔄 Parentheses Scanning
-- Recognizes ( and ) as valid tokens.
+- Recognizes `(` and `)` as valid tokens.
 
 ### 3. 🧱 Braces Scanning
-- Recognizes { and }.
+- Recognizes `{` and `}`.
 
 ### 4. 🔣 Other Single-Character Tokens
-- Handles characters like ,, ., ;, -, +, *, /.
+- Handles characters like `,`, `.`, `;`, `-`, `+`, `*`, `/`.
 
 ### 5. ❌ Lexical Errors
 - Detects and raises errors for unrecognized characters.
 
 ### 6. 🟰 Assignment & Equality Operators
-- Handles = and == correctly.
+- Handles `=` and `==` correctly.
 
 ### 7. ❗ Negation & Inequality Operators
-- Recognizes ! and !=.
+- Recognizes `!` and `!=`.
 
 ### 8. 🔃 Relational Operators
-- Supports <, <=, >, and >=.
+- Supports `<`, `<=`, `>`, and `>=`.
 
 ### 9. ➗ Division Operator & Comments
-- Differentiates between / (division) and // (comments).
+- Differentiates between `/` (division) and `//` (comments).
 - Ignores comments when tokenizing.
 
 ### 10. ␣ Whitespace Handling
@@ -76,19 +76,19 @@ We’ve implemented the following token scanning features so far:
 - Maintains correct line numbers when reporting errors across multiple lines.
 
 ### 12. 🧶 String Literals with Escape Sequences
-- Supports string scanning like "Hello, world!" and "He said \"Hi\"!".
+- Supports string scanning like `"Hello, world!"` and `"He said \"Hi\"!"`.
 - Detects unterminated strings and raises lexical errors.
 
 ### 13. 🔡 Identifiers and Keywords
 - Recognizes variable names, function names, etc.
-- Distinguishes between identifiers and reserved keywords like if, else, true, false, nil, for, while, etc.
+- Distinguishes between identifiers and reserved keywords like `if`, `else`, `true`, `false`, `nil`, `for`, `while`, etc.
 
 ### 14. 🔢 Number Literals
-- Scans both integer and floating-point numbers, e.g. 123, 3.14.
+- Scans both integer and floating-point numbers, e.g. `123`, `3.14`.
 
 ---
 
-## 🧮 Parser Features Implemented
+## 🌲 Parser Features Implemented
 
 The parser translates tokens into expressions in an Abstract Syntax Tree (AST).
 
@@ -101,6 +101,7 @@ The parser translates tokens into expressions in an Abstract Syntax Tree (AST).
 - **Unary Operators**: Parses unary `!` and `-` expressions.
 - **Binary Arithmetic (Part 1)**: Parses `*` and `/` for multiplication and division.
 - **Binary Arithmetic (Part 2)**: Parses `+` and `-` for addition and subtraction.
+- **String Concatenation**: Recognizes string concatenation via the `+` operator.
 - **Comparison Operators**: Parses `<`, `<=`, `>`, `>=`.
 - **Equality Operators**: Parses `==`, `!=`.
 
@@ -114,13 +115,16 @@ The interpreter evaluates expressions by traversing the AST.
 
 - **Literals**: Evaluates boolean, `nil`, string, and number literals.
 - **Grouping**: Correctly evaluates parenthesized expressions.
-- **Unary Operators**: Supports `!` (logical not) and `-` (negation).
+- **Unary Operators**:
+  - Logical NOT: `!`
+  - Numeric Negation: `-`
 - **Arithmetic Operators**:
-  - Multiplication and Division: `*`, `/`
-  - Addition and Subtraction: `+`, `-`
-  - ✅ **String Concatenation**: Supports `"Hello, " + "world!"`.
+  - Multiplication (`*`) and Division (`/`)
+  - Addition (`+`) and Subtraction (`-`)
+- **String Concatenation**:
+  - Evaluates expressions like `"Hello, " + "World!"` resulting in string joining.
 - **Equality Operators**:
-  - Supports `==` and `!=` with proper type comparison and `nil` handling.
+  - Proper handling for `==` and `!=`, including comparison between different types and `nil`.
 
 ---
 
@@ -174,3 +178,5 @@ Developed with ❤️ by Mohammed Abdul Rahman
 
 This project is open-source and available under the [MIT License](LICENSE).
 ```
+
+---
