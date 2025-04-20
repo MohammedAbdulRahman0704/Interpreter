@@ -30,69 +30,69 @@ The aim is to build an interpreter from scratch by implementing each phase: scan
 
 ---
 
-## 📘 What is Scanning?
+## What is Scanning?
 
 **Scanning (Lexical Analysis)** is the first phase in the interpretation process. It reads raw source code and converts it into a list of tokens which represent keywords, symbols, identifiers, etc.
 
 ---
 
-## ✅ Implemented Scanner Features
+## Implemented Scanner Features
 
 We’ve implemented the following token scanning features so far:
 
-### 1. 📄 Empty File Handling
+### 1. Empty File Handling
 - Gracefully processes and returns no tokens.
 
-### 2. 🔄 Parentheses Scanning
+### 2. Parentheses Scanning
 - Recognizes `(` and `)` as valid tokens.
 
-### 3. 🧱 Braces Scanning
+### 3. Braces Scanning
 - Recognizes `{` and `}`.
 
-### 4. 🔣 Other Single-Character Tokens
+### 4. Other Single-Character Tokens
 - Handles characters like `,`, `.`, `;`, `-`, `+`, `*`, `/`.
 
-### 5. ❌ Lexical Errors
+### 5. Lexical Errors
 - Detects and raises errors for unrecognized characters.
 
-### 6. 🟰 Assignment & Equality Operators
+### 6. Assignment & Equality Operators
 - Handles `=` and `==` correctly.
 
-### 7. ❗ Negation & Inequality Operators
+### 7. Negation & Inequality Operators
 - Recognizes `!` and `!=`.
 
-### 8. 🔃 Relational Operators
+### 8. Relational Operators
 - Supports `<`, `<=`, `>`, and `>=`.
 
-### 9. ➗ Division Operator & Comments
+### 9. Division Operator & Comments
 - Differentiates between `/` (division) and `//` (comments).
 - Ignores comments when tokenizing.
 
-### 10. ␣ Whitespace Handling
+### 10. Whitespace Handling
 - Skips over spaces, tabs, and newlines correctly.
 - Keeps track of line numbers for error reporting.
 
-### 11. 🧵 Multi-line Error Reporting
+### 11. Multi-line Error Reporting
 - Maintains correct line numbers when reporting errors across multiple lines.
 
-### 12. 🧶 String Literals with Escape Sequences
+### 12. String Literals with Escape Sequences
 - Supports string scanning like `"Hello, world!"` and `"He said \"Hi\"!"`.
 - Detects unterminated strings and raises lexical errors.
 
-### 13. 🔡 Identifiers and Keywords
+### 13. Identifiers and Keywords
 - Recognizes variable names, function names, etc.
 - Distinguishes between identifiers and reserved keywords like `if`, `else`, `true`, `false`, `nil`, `for`, `while`, etc.
 
-### 14. 🔢 Number Literals
+### 14. Number Literals
 - Scans both integer and floating-point numbers, e.g. `123`, `3.14`.
 
 ---
 
-## 🌲 Parser Features Implemented
+## Parser Features Implemented
 
 The parser translates tokens into expressions in an Abstract Syntax Tree (AST).
 
-### ✅ Supported Expression Parsing:
+### Supported Expression Parsing:
 
 - **Booleans & Nil**: Parses `true`, `false`, and `nil` as literal expressions.
 - **Number Literals**: Parses numeric tokens into literal expression nodes.
@@ -104,14 +104,16 @@ The parser translates tokens into expressions in an Abstract Syntax Tree (AST).
 - **String Concatenation**: Recognizes string concatenation via the `+` operator.
 - **Comparison Operators**: Parses `<`, `<=`, `>`, `>=`.
 - **Equality Operators**: Parses `==`, `!=`.
+- **Print Statements**: Parses `print` statements with single or multiple expressions.
+- **Expression Statements**: Supports standalone expression statements.
 
 ---
 
-## 🧠 Evaluator Features Implemented
+## Evaluator Features Implemented
 
 The interpreter evaluates expressions by traversing the AST.
 
-### ✅ Supported Evaluation:
+### Supported Evaluation:
 
 - **Literals**: Evaluates boolean, `nil`, string, and number literals.
 - **Grouping**: Correctly evaluates parenthesized expressions.
@@ -125,10 +127,15 @@ The interpreter evaluates expressions by traversing the AST.
   - Evaluates expressions like `"Hello, " + "World!"` resulting in string joining.
 - **Equality Operators**:
   - Proper handling for `==` and `!=`, including comparison between different types and `nil`.
+- **Print Statements**:
+  - Outputs the result of evaluated expressions.
+  - Supports multiple print statements in sequence.
+- **Expression Statements**:
+  - Evaluates expressions on their own (without assignment or print).
 
 ---
 
-## 🔬 Testing
+## Testing
 
 The project uses Python’s built-in `unittest` framework. Tests are written to cover scanning, parsing, and evaluation.
 
@@ -150,33 +157,30 @@ OK
 
 ---
 
-## 🚀 Upcoming Features
+## Upcoming Features
 
 - Logical operators (`and`, `or`) in expressions
 - AST pretty-printing / visualization
 - Variable declarations and environments
-- Expression statements and print statements
 - Control flow: `if`, `while`, `for`
 - Functions, closures, and classes
 - REPL and file execution support
 
 ---
 
-## 🙌 Contributions
+## Contributions
 
 Pull requests are welcome! If you’d like to contribute, feel free to fork the repository and submit a PR. Please ensure all tests pass before submitting.
 
 ---
 
-## 🧠 Author
+## Author
 
 Developed with ❤️ by Mohammed Abdul Rahman
 
 ---
 
-## 📖 License
+## License
 
 This project is open-source and available under the [MIT License](LICENSE).
 ```
-
----
