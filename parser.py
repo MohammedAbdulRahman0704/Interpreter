@@ -1,7 +1,7 @@
 # parser.py
 
 from interpreter_token import Token, TokenType
-from ast_1 import Expr, Literal, BooleanLiteral, NilLiteral, NumberLiteral, Visitor, StringLiteral, Grouping, Unary, Binary
+from ast_1 import Expr, Literal, BooleanLiteral, NilLiteral, NumberLiteral, Visitor, StringLiteral, Grouping, Unary, Binary, Print, VarDeclarationStmt, Stmt
 
 class Parser:
     def __init__(self, tokens):
@@ -9,15 +9,38 @@ class Parser:
         self.current = 0
 
     def parse(self):
-        try:
-            expression = self.expression()
-            if not self._is_at_end():
-                raise self._error(self._peek(), "Expect end of input after expression.")
-            return expression
-        except ParseError as error:
-            print(error)
-            self._synchronize()
-            raise error
+        statements = []
+        while not self._is_at_end():
+            statements.append(self._declaration())
+        return statements
+    
+    def _declaration(self):
+        if self._match(TokenType.VAR):
+            return self._var_declaration()
+        return self._statement()
+
+    def _var_declaration(self):
+        name = self._consume(TokenType.IDENTIFIER, "Expect variable name.")
+        initializer = None
+        if self._match(TokenType.EQUAL):
+            initializer = self.expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
+        return VarDeclarationStmt(name, initializer)
+    
+    def _statement(self):
+        if self._match(TokenType.PRINT):
+            return self._print_statement()
+        return self._expression_statement() # Handle expressions as statements
+
+    def _print_statement(self):
+        expression = self.expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return Print(expression)
+
+    def _expression_statement(self):
+        expr = self.expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after expression.")
+        return expr
 
     def expression(self):
         left = self.equality()
